@@ -30,6 +30,7 @@ const config = {
   cors: {
     clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
     adminUrl: process.env.ADMIN_URL || 'http://localhost:3001',
+    allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:3001').split(',').map(url => url.trim()),
   },
 
   email: {

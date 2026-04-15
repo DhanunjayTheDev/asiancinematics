@@ -47,7 +47,20 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(
   cors({
-    origin: [config.cors.clientUrl, config.cors.adminUrl],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        config.cors.clientUrl,
+        config.cors.adminUrl,
+        ...config.cors.allowedOrigins,
+      ].filter(Boolean);
+
+      // Allow requests with no origin (mobile apps, Postman, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
