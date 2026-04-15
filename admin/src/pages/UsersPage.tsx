@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import api from '../lib/api';
+import { cacheManager } from '../lib/cache';
 import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
+import CustomSelect from '../components/CustomSelect';
+import Button from '../components/Button';
 
 const roleColors: Record<string, string> = {
-  customer: 'bg-gray-100 text-gray-700',
-  super_admin: 'bg-red-100 text-red-700',
-  support: 'bg-blue-100 text-blue-700',
-  freelancer: 'bg-purple-100 text-purple-700',
-  employee: 'bg-green-100 text-green-700',
+  customer: 'bg-gray-600/20 text-gray-300',
+  super_admin: 'bg-red-600/20 text-red-300',
+  support: 'bg-blue-600/20 text-blue-300',
+  freelancer: 'bg-purple-600/20 text-purple-300',
+  employee: 'bg-green-600/20 text-green-300',
 };
 
 const UsersPage = () => {
@@ -24,7 +27,7 @@ const UsersPage = () => {
     setLoading(true);
     const params: any = { page, limit: 20 };
     if (search) params.search = search;
-    api.get('/auth/admin/users', { params }).then(({ data }) => {
+    api.get('/auth/users', { params }).then(({ data }) => {
       setUsers(data.data);
       setTotalPages(data.meta?.totalPages || 1);
     }).catch(() => toast.error('Failed to load users')).finally(() => setLoading(false));
@@ -34,7 +37,7 @@ const UsersPage = () => {
 
   const handleToggleActive = async (id: string) => {
     try {
-      await api.put(`/auth/admin/users/${id}/toggle-active`);
+      await api.put(`/auth/users/${id}/toggle-active`);
       toast.success('User status updated');
       fetchUsers();
     } catch {
@@ -44,7 +47,7 @@ const UsersPage = () => {
 
   const handleRoleChange = async (id: string, role: string) => {
     try {
-      await api.put(`/auth/admin/users/${id}/role`, { role });
+      await api.put(`/auth/users/${id}/role`, { role });
       toast.success('Role updated');
       fetchUsers();
     } catch (err: any) {
@@ -58,20 +61,20 @@ const UsersPage = () => {
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">Users</h1>
+          <h1 className="text-2xl font-bold text-white">Users</h1>
           <form onSubmit={(e) => { e.preventDefault(); setPage(1); }} className="flex gap-2">
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name/email..." className="input-field w-48" />
-            <button type="submit" className="btn-secondary btn-sm">Search</button>
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name/email..." className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition w-48" />
+            <Button type="submit" variant="secondary" size="sm">Search</Button>
           </form>
         </div>
 
         {loading ? <Loading /> : users.length === 0 ? (
-          <p className="text-gray-500 text-center py-12">No users found.</p>
+          <p className="text-gray-400 text-center py-12">No users found.</p>
         ) : (
-          <div className="card overflow-hidden">
+          <div className="bg-gray-900 rounded-2xl border border-blue-500/20 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-500 text-left">
+                <thead className="bg-black text-gray-400 text-left">
                   <tr>
                     <th className="px-5 py-3 font-medium">Name</th>
                     <th className="px-5 py-3 font-medium">Email</th>
@@ -82,35 +85,41 @@ const UsersPage = () => {
                     <th className="px-5 py-3 font-medium">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-blue-500/10">
                   {users.map((u) => (
-                    <tr key={u._id} className="hover:bg-gray-50">
-                      <td className="px-5 py-3 font-medium text-gray-900">{u.name}</td>
-                      <td className="px-5 py-3 text-gray-600">{u.email}</td>
-                      <td className="px-5 py-3 text-gray-600">{u.phone}</td>
+                    <tr key={u._id} className="hover:bg-blue-500/10">
+                      <td className="px-5 py-3 font-medium text-white">{u.name}</td>
+                      <td className="px-5 py-3 text-gray-300">{u.email}</td>
+                      <td className="px-5 py-3 text-gray-300">{u.phone}</td>
                       <td className="px-5 py-3">
-                        <select
-                          value={u.role}
-                          onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                          className="text-xs border rounded px-2 py-1"
-                        >
-                          <option value="customer">Customer</option>
-                          <option value="super_admin">Super Admin</option>
-                          <option value="support">Support</option>
-                          <option value="freelancer">Freelancer</option>
-                          <option value="employee">Employee</option>
-                        </select>
+                        <div className="w-40">
+                          <CustomSelect
+                            value={u.role}
+                            onChange={(value) => handleRoleChange(u._id, String(value))}
+                            options={[
+                              { value: 'customer', label: 'Customer' },
+                              { value: 'super_admin', label: 'Super Admin' },
+                              { value: 'support', label: 'Support' },
+                              { value: 'freelancer', label: 'Freelancer' },
+                              { value: 'employee', label: 'Employee' },
+                            ]}
+                          />
+                        </div>
                       </td>
                       <td className="px-5 py-3">
-                        <span className={`badge ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        <span className={`badge ${u.isActive ? 'bg-green-600/20 text-green-300' : 'bg-red-600/20 text-red-300'}`}>
                           {u.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-gray-500">{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
+                      <td className="px-5 py-3 text-gray-400">{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
                       <td className="px-5 py-3">
-                        <button onClick={() => handleToggleActive(u._id)} className={`text-sm hover:underline ${u.isActive ? 'text-red-600' : 'text-green-600'}`}>
+                        <Button
+                          onClick={() => handleToggleActive(u._id)}
+                          variant={u.isActive ? 'danger' : 'success'}
+                          size="sm"
+                        >
                           {u.isActive ? 'Deactivate' : 'Activate'}
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

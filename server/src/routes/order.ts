@@ -185,23 +185,42 @@ router.put(
     const order = await Order.findById(req.params.id);
     if (!order || order.isDeleted) throw new NotFoundError('Order not found');
 
-    if (status === 'cancelled' && order.status === 'completed') {
-      throw new BadRequestError('Cannot cancel a completed order');
+    // Production-grade status transition validation
+    const allowedTransitions: Record<string, string[]> = {
+      pending:    ['confirmed', 'processing', 'cancelled'],
+      confirmed:  ['processing', 'cancelled'],
+      processing: ['shipped', 'cancelled'],
+      shipped:    ['delivered'],
+      delivered:  [], // terminal state
+      cancelled:  [], // terminal state
+    };
+
+    const allowed = allowedTransitions[order.status] || [];
+    if (!allowed.includes(status)) {
+      throw new BadRequestError(
+        `Cannot transition from "${order.status}" to "${status}". Allowed: ${allowed.join(', ') || 'none (terminal state)'}`
+      );
     }
 
     // Restore stock on cancellation
-    if (status === 'cancelled' && order.status !== 'cancelled') {
+    if (status === 'cancelled') {
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+      }
+      if (order.paymentStatus === 'paid') {
+        order.paymentStatus = 'refunded';
       }
     }
 
     order.status = status;
     if (notes) order.notes = notes;
     if (cancelReason) order.cancelReason = cancelReason;
-    if (status === 'completed' && order.paymentMethod === 'COD') {
+
+    // Auto-mark COD as paid on delivery
+    if (status === 'delivered' && order.paymentMethod === 'COD') {
       order.paymentStatus = 'paid';
     }
+
     await order.save();
 
     const user = await User.findById(order.user);
@@ -223,8 +242,8 @@ router.put(
     const order = await Order.findOne({ _id: req.params.id, user: req.user!._id, isDeleted: false });
     if (!order) throw new NotFoundError('Order not found');
 
-    if (order.status !== 'pending') {
-      throw new BadRequestError('Can only cancel pending orders');
+    if (!['pending', 'confirmed'].includes(order.status)) {
+      throw new BadRequestError('Can only cancel pending or confirmed orders');
     }
 
     // Restore stock

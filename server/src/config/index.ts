@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const config = {
   env: process.env.NODE_ENV || 'development',
@@ -10,9 +11,9 @@ const config = {
   },
 
   redis: {
-    host: process.env.REDIS_HOST || '127.0.0.1',
+    host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    password: process.env.REDIS_PASSWORD || undefined,
+    password: process.env.REDIS_PASSWORD,
   },
 
   jwt: {
@@ -69,8 +70,8 @@ const config = {
 
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-    max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
-    loginMax: parseInt(process.env.LOGIN_RATE_LIMIT_MAX || '5', 10),
+    max: parseInt(process.env.RATE_LIMIT_MAX || '2000', 10),
+    loginMax: parseInt(process.env.LOGIN_RATE_LIMIT_MAX || '20', 10),
   },
 
   features: {

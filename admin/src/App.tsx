@@ -9,9 +9,13 @@ import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ServicesPage from './pages/ServicesPage';
+import ProjectsPage from './pages/ProjectsPage';
+import BrandsPage from './pages/BrandsPage';
+import PartnersPage from './pages/PartnersPage';
 import TicketsPage from './pages/TicketsPage';
 import SiteVisitsPage from './pages/SiteVisitsPage';
 import InquiriesPage from './pages/InquiriesPage';
+import ForumsPage from './pages/ForumsPage';
 import UsersPage from './pages/UsersPage';
 import ReportsPage from './pages/ReportsPage';
 
@@ -34,9 +38,13 @@ const App = () => {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/brands" element={<BrandsPage />} />
+          <Route path="/partners" element={<PartnersPage />} />
           <Route path="/tickets" element={<TicketsPage />} />
           <Route path="/site-visits" element={<SiteVisitsPage />} />
           <Route path="/inquiries" element={<InquiriesPage />} />
+          <Route path="/forums" element={<ForumsPage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/reports" element={<ReportsPage />} />
         </Route>

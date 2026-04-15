@@ -9,7 +9,7 @@ export interface IInquiry extends Document {
   message: string;
   budget?: string;
   requirements?: string;
-  status: 'new' | 'contacted' | 'converted' | 'closed';
+  status: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'converted' | 'closed';
   source: 'website' | 'whatsapp' | 'phone' | 'email' | 'other';
   notes?: string;
   assignedTo?: mongoose.Types.ObjectId;
@@ -28,7 +28,7 @@ const inquirySchema = new Schema<IInquiry>(
     requirements: { type: String },
     status: {
       type: String,
-      enum: ['new', 'contacted', 'converted', 'closed'],
+      enum: ['new', 'contacted', 'qualified', 'proposal_sent', 'converted', 'closed'],
       default: 'new',
       index: true,
     },

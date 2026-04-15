@@ -35,11 +35,11 @@ const InquiryPage = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center bg-black">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Inquiry Submitted!</h2>
-          <p className="text-gray-600">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
+          <div className="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
+          <h2 className="text-2xl font-bold text-white mb-2">Inquiry Submitted!</h2>
+          <p className="text-gray-400">Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.</p>
         </div>
       </div>
     );
@@ -48,50 +48,106 @@ const InquiryPage = () => {
   return (
     <>
       <Helmet>
-        <title>Submit an Inquiry | Asian Cinematics</title>
+        <title>Submit an Inquiry | Pravara World Tech</title>
       </Helmet>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Submit an Inquiry</h1>
-        <p className="text-gray-600 mb-8">Tell us about your project and we&apos;ll get back to you with a custom solution.</p>
+      <div className="min-h-screen bg-black py-12">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Submit an Inquiry</h1>
+          <p className="text-gray-400 mb-8">Tell us about your project and we&apos;ll get back to you with a custom solution within 24 hours.</p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input type="text" name="name" value={form.name} onChange={handleChange} required className="input-field" />
+          <form onSubmit={handleSubmit} className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-lg p-8 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  value={form.name} 
+                  onChange={handleChange} 
+                  required 
+                  className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors" 
+                  placeholder="Your full name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  value={form.email} 
+                  onChange={handleChange} 
+                  required 
+                  className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors" 
+                  placeholder="your@email.com"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" name="email" value={form.email} onChange={handleChange} required className="input-field" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  value={form.phone} 
+                  onChange={handleChange} 
+                  required 
+                  className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors" 
+                  placeholder="10-digit number"
+                  pattern="[0-9]{10}" 
+                  title="Enter a valid 10-digit phone number" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Budget (₹, optional)</label>
+                <input 
+                  type="number" 
+                  name="budget" 
+                  value={form.budget} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors" 
+                  min="0" 
+                  placeholder="Estimated budget"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input type="tel" name="phone" value={form.phone} onChange={handleChange} required className="input-field" pattern="[0-9]{10}" title="Enter a valid 10-digit phone number" />
+              <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+              <input 
+                type="text" 
+                name="subject" 
+                value={form.subject} 
+                onChange={handleChange} 
+                required 
+                className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors" 
+                placeholder="Brief summary of your requirement"
+              />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Budget (₹, optional)</label>
-              <input type="number" name="budget" value={form.budget} onChange={handleChange} className="input-field" min="0" placeholder="Estimated budget" />
+              <label className="block text-sm font-medium text-gray-300 mb-2">Requirements</label>
+              <textarea 
+                name="requirements" 
+                value={form.requirements} 
+                onChange={handleChange} 
+                required 
+                rows={5} 
+                className="w-full px-4 py-3 bg-blue-900/30 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition-colors resize-none" 
+                placeholder="Describe your project requirements in detail..."
+              />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-            <input type="text" name="subject" value={form.subject} onChange={handleChange} required className="input-field" placeholder="Brief summary of your requirement" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Requirements</label>
-            <textarea name="requirements" value={form.requirements} onChange={handleChange} required rows={5} className="input-field" placeholder="Describe your project requirements in detail..." />
-          </div>
-
-          <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? 'Submitting...' : 'Submit Inquiry'}
-          </button>
-        </form>
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-semibold rounded-lg transition-colors"
+            >
+              {loading ? 'Submitting...' : 'Submit Inquiry — It\'s Free'}
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

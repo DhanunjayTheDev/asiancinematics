@@ -79,9 +79,9 @@ export interface Order {
   shippingCost: number;
   tax: number;
   totalAmount: number;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   paymentMethod: 'COD' | 'online';
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   assignedTo?: User;
   notes?: string;
   cancelReason?: string;
@@ -122,7 +122,7 @@ export interface SiteVisit {
   location: { address: string; city: string; state: string; pincode: string };
   purpose: string;
   notes?: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
   assignedTo?: User;
   createdAt: string;
 }

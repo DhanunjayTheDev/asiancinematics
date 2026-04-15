@@ -14,6 +14,7 @@ import fs from 'fs';
 
 import config from './config';
 import { connectDB } from './config/database';
+import { getRedis } from './config/redis';
 import { swaggerOptions } from './config/swagger';
 import { initSocket } from './socket';
 import { initWorkers } from './jobs/notificationJob';
@@ -112,6 +113,17 @@ app.use(errorHandler);
 const start = async (): Promise<void> => {
   try {
     await connectDB();
+    
+    // Initialize Redis
+    try {
+      logger.info('Initializing Redis connection...');
+      const redis = getRedis();
+      // Add a small delay to allow Redis events to fire
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (err: any) {
+      logger.error('Redis initialization error:', err.message || err);
+    }
+
     initSocket(server);
 
     try {

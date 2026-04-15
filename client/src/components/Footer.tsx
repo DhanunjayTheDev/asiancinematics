@@ -1,63 +1,110 @@
 import { Link } from 'react-router-dom';
-import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiFacebook, FiInstagram, FiLinkedin, FiTwitter } from 'react-icons/fi';
+import footerLogo from '../assets/pravarafooterlogo.jpeg';
 
 const Footer = () => (
-  <footer className="bg-gray-900 text-gray-300">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AC</span>
-            </div>
-            <span className="font-semibold text-lg text-white">Asian Cinematics</span>
-          </div>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            Professional cinematography services and premium equipment for your creative projects.
+  <footer className="bg-black border-t border-blue-500/20">
+    <div className="max-w-7xl mx-auto px-6">
+      {/* Main Footer */}
+      <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        {/* Brand */}
+        <div className="lg:col-span-1">
+          <img src={footerLogo} alt="Pravara World Tech" className="w-40 h-40 object-cover mb-4" />
+          <h4 className="text-lg font-bold text-white mb-2">Pravara World Tech</h4>
+          <p className="text-xs text-gray-400 leading-relaxed mb-4">
+            Premier smart technology & lifestyle solutions — Home Theatre, Smart Home, Security, Decoratives, and Structural Works. PAN India service.
           </p>
+          <div className="flex gap-4">
+            <a href="#" className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 hover:bg-blue-500/30 transition-colors">
+              <FiFacebook className="w-4 h-4" />
+            </a>
+            <a href="#" className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 hover:bg-blue-500/30 transition-colors">
+              <FiInstagram className="w-4 h-4" />
+            </a>
+            <a href="#" className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 hover:bg-blue-500/30 transition-colors">
+              <FiLinkedin className="w-4 h-4" />
+            </a>
+          </div>
         </div>
 
+        {/* Quick Links */}
         <div>
-          <h4 className="font-semibold text-white mb-4">Quick Links</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/products" className="hover:text-white transition-colors">Products</Link></li>
-            <li><Link to="/services" className="hover:text-white transition-colors">Services</Link></li>
-            <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
-            <li><Link to="/book-visit" className="hover:text-white transition-colors">Book a Visit</Link></li>
+          <h4 className="text-sm font-semibold text-white mb-4">Quick Links</h4>
+          <ul className="space-y-3 text-xs text-gray-400">
+            <li><Link to="/solutions" className="hover:text-yellow-400 transition-colors">Solutions</Link></li>
+            <li><Link to="/structural-works" className="hover:text-yellow-400 transition-colors">Structural Works</Link></li>
+            <li><Link to="/projects" className="hover:text-yellow-400 transition-colors">Projects</Link></li>
+            <li><Link to="/brands" className="hover:text-yellow-400 transition-colors">Brands</Link></li>
+            <li><Link to="/partner-network" className="hover:text-yellow-400 transition-colors">Partner Network</Link></li>
+            <li><Link to="/forums" className="hover:text-yellow-400 transition-colors">Forums</Link></li>
           </ul>
         </div>
 
+        {/* Services */}
         <div>
-          <h4 className="font-semibold text-white mb-4">Account</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/profile" className="hover:text-white transition-colors">My Profile</Link></li>
-            <li><Link to="/orders" className="hover:text-white transition-colors">My Orders</Link></li>
-            <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-            <li><Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
+          <h4 className="text-sm font-semibold text-white mb-4">Services</h4>
+          <ul className="space-y-3 text-xs text-gray-400">
+            <li><Link to="/services" className="hover:text-yellow-400 transition-colors">Installation</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-400 transition-colors">Consultation</Link></li>
+            <li><Link to="/book-visit" className="hover:text-yellow-400 transition-colors">Site Visit</Link></li>
+            <li><Link to="/inquiry" className="hover:text-yellow-400 transition-colors">Project Inquiry</Link></li>
+            <li><Link to="/contact" className="hover:text-yellow-400 transition-colors">Support</Link></li>
           </ul>
         </div>
 
+        {/* Company */}
         <div>
-          <h4 className="font-semibold text-white mb-4">Contact</h4>
-          <ul className="space-y-3 text-sm">
-            <li className="flex items-center space-x-2">
-              <FiMail className="w-4 h-4 text-primary-400" />
-              <span>info@asiancinematics.com</span>
+          <h4 className="text-sm font-semibold text-white mb-4">Company</h4>
+          <ul className="space-y-3 text-xs text-gray-400">
+            <li><Link to="/about" className="hover:text-yellow-400 transition-colors">About Us</Link></li>
+            <li><Link to="/projects" className="hover:text-yellow-400 transition-colors">Our Projects</Link></li>
+            <li><Link to="/partner-network" className="hover:text-yellow-400 transition-colors">Careers / Partner</Link></li>
+            <li><Link to="/forums" className="hover:text-yellow-400 transition-colors">Community Forum</Link></li>
+            <li><Link to="/contact" className="hover:text-yellow-400 transition-colors">Contact</Link></li>
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div>
+          <h4 className="text-sm font-semibold text-white mb-4">Get in Touch</h4>
+          <ul className="space-y-3 text-xs text-gray-400">
+            <li>
+              <a href="tel:+919849697886" className="hover:text-yellow-400 transition-colors flex items-center gap-2">
+                <FiPhone className="w-3.5 h-3.5 flex-shrink-0 text-yellow-400" />
+                <span>+91 98496 97886</span>
+              </a>
             </li>
-            <li className="flex items-center space-x-2">
-              <FiPhone className="w-4 h-4 text-primary-400" />
-              <span>+91 98765 43210</span>
+            <li>
+              <a href="tel:+919966167886" className="hover:text-yellow-400 transition-colors flex items-center gap-2">
+                <FiPhone className="w-3.5 h-3.5 flex-shrink-0 text-yellow-400" />
+                <span>+91 99661 67886</span>
+              </a>
             </li>
-            <li className="flex items-start space-x-2">
-              <FiMapPin className="w-4 h-4 text-primary-400 mt-0.5" />
-              <span>123 Cinema Street, Film City, Mumbai - 400001</span>
+            <li>
+              <a href="mailto:info@pravaraworldtech.com" className="hover:text-yellow-400 transition-colors flex items-center gap-2">
+                <FiMail className="w-3.5 h-3.5 flex-shrink-0 text-yellow-400" />
+                <span>info@pravaraworldtech.com</span>
+              </a>
+            </li>
+            <li className="flex items-center gap-2 text-gray-500">
+              <FiMapPin className="w-3.5 h-3.5 flex-shrink-0 text-yellow-400" />
+              <span>Hyderabad, India</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} Asian Cinematics. All rights reserved.
+      {/* Divider */}
+      <div className="border-t border-blue-500/20"></div>
+
+      {/* Bottom Footer */}
+      <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+        <p>&copy; {new Date().getFullYear()} Pravara World Tech. All rights reserved.</p>
+        <div className="flex items-center gap-6">
+          <Link to="/" className="hover:text-yellow-400 transition-colors">Privacy Policy</Link>
+          <Link to="/" className="hover:text-yellow-400 transition-colors">Terms & Conditions</Link>
+          <Link to="/" className="hover:text-yellow-400 transition-colors">Disclaimer</Link>
+        </div>
       </div>
     </div>
   </footer>

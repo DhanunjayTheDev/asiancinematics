@@ -8,11 +8,11 @@ const Breadcrumb = () => {
   if (paths.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="bg-gray-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <ol className="flex items-center space-x-2 text-sm">
+    <nav aria-label="Breadcrumb" className="bg-black border-b border-blue-500/20">
+      <div className="max-w-7xl mx-auto px-6 py-3">
+        <ol className="flex items-center gap-2 text-sm">
           <li>
-            <Link to="/" className="text-gray-500 hover:text-primary-600 flex items-center">
+            <Link to="/" className="text-gray-400 hover:text-yellow-400 flex items-center">
               <FiHome className="w-4 h-4" />
             </Link>
           </li>
@@ -22,12 +22,12 @@ const Breadcrumb = () => {
             const isLast = index === paths.length - 1;
 
             return (
-              <li key={href} className="flex items-center space-x-2">
-                <FiChevronRight className="w-4 h-4 text-gray-400" />
+              <li key={href} className="flex items-center gap-2">
+                <FiChevronRight className="w-4 h-4 text-gray-600" />
                 {isLast ? (
-                  <span className="text-gray-900 font-medium">{label}</span>
+                  <span className="text-gray-300 font-semibold">{label}</span>
                 ) : (
-                  <Link to={href} className="text-gray-500 hover:text-primary-600">
+                  <Link to={href} className="text-gray-400 hover:text-yellow-400">
                     {label}
                   </Link>
                 )}

@@ -21,19 +21,19 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50 transition"
+        className="px-3 py-1.5 text-sm rounded-lg border border-blue-500/20 disabled:opacity-40 hover:bg-blue-500/10 transition text-gray-300 hover:text-blue-300"
       >
         Prev
       </button>
       {pages.map((p, i) =>
         p === '...' ? (
-          <span key={`dots-${i}`} className="px-2 text-gray-400">...</span>
+          <span key={`dots-${i}`} className="px-2 text-gray-500">...</span>
         ) : (
           <button
             key={p}
             onClick={() => onPageChange(p)}
             className={`px-3 py-1.5 text-sm rounded-lg border transition ${
-              p === page ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-300 hover:bg-gray-50'
+              p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-blue-500/20 text-gray-300 hover:bg-blue-500/10 hover:text-blue-300'
             }`}
           >
             {p}
@@ -43,7 +43,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50 transition"
+        className="px-3 py-1.5 text-sm rounded-lg border border-blue-500/20 disabled:opacity-40 hover:bg-blue-500/10 transition text-gray-300 hover:text-blue-300"
       >
         Next
       </button>

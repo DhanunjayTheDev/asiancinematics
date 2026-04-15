@@ -163,7 +163,13 @@ router.get(
     const search = req.query.search as string;
 
     const filter: Record<string, unknown> = { isDeleted: false };
-    if (role) filter.role = role;
+    if (role) {
+      if (role.includes(',')) {
+        filter.role = { $in: role.split(',').map(r => r.trim()) };
+      } else {
+        filter.role = role;
+      }
+    }
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: 'i' } },

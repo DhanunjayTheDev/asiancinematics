@@ -16,31 +16,50 @@ const router = Router();
 router.get(
   '/dashboard',
   authenticate,
-  authorize('super_admin'),
+  authorize('super_admin', 'support', 'employee'),
   asyncHandler(async (_req, res) => {
     const [
       totalOrders,
       pendingOrders,
-      completedOrders,
+      confirmedOrders,
+      processingOrders,
+      shippedOrders,
+      deliveredOrders,
       cancelledOrders,
       totalRevenue,
       openTickets,
       pendingVisits,
       newInquiries,
       totalUsers,
+      totalCustomers,
+      ordersByStatus,
+      recentOrders,
     ] = await Promise.all([
       Order.countDocuments({ isDeleted: false }),
       Order.countDocuments({ status: 'pending', isDeleted: false }),
-      Order.countDocuments({ status: 'completed', isDeleted: false }),
+      Order.countDocuments({ status: 'confirmed', isDeleted: false }),
+      Order.countDocuments({ status: 'processing', isDeleted: false }),
+      Order.countDocuments({ status: 'shipped', isDeleted: false }),
+      Order.countDocuments({ status: 'delivered', isDeleted: false }),
       Order.countDocuments({ status: 'cancelled', isDeleted: false }),
       Order.aggregate([
         { $match: { status: { $ne: 'cancelled' }, isDeleted: false } },
         { $group: { _id: null, total: { $sum: '$totalAmount' } } },
       ]),
       ServiceTicket.countDocuments({ status: { $in: ['open', 'in_progress'] }, isDeleted: false }),
-      SiteVisit.countDocuments({ status: 'pending', isDeleted: false }),
+      SiteVisit.countDocuments({ status: 'scheduled', isDeleted: false }),
       Inquiry.countDocuments({ status: 'new', isDeleted: false }),
       User.countDocuments({ isDeleted: false }),
+      User.countDocuments({ role: 'customer', isDeleted: false }),
+      Order.aggregate([
+        { $match: { isDeleted: false } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
+      Order.find({ isDeleted: false })
+        .populate('user', 'name email')
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean(),
     ]);
 
     const revenueByMonth = await Order.aggregate([
@@ -52,18 +71,33 @@ router.get(
           count: { $sum: 1 },
         },
       },
-      { $sort: { _id: -1 } },
+      { $sort: { _id: 1 } },
       { $limit: 12 },
     ]);
 
+    const monthlyRevenue = revenueByMonth.map((m: any) => ({
+      month: m._id,
+      revenue: m.revenue,
+      orders: m.count,
+    }));
+
     sendSuccess(res, {
-      orders: { total: totalOrders, pending: pendingOrders, completed: completedOrders, cancelled: cancelledOrders },
-      revenue: totalRevenue[0]?.total || 0,
-      revenueByMonth,
-      tickets: { open: openTickets },
-      visits: { pending: pendingVisits },
-      inquiries: { new: newInquiries },
-      users: { total: totalUsers },
+      totalOrders,
+      pendingOrders,
+      confirmedOrders,
+      processingOrders,
+      shippedOrders,
+      deliveredOrders,
+      cancelledOrders,
+      totalRevenue: totalRevenue[0]?.total || 0,
+      openTickets,
+      pendingVisits,
+      newInquiries,
+      totalUsers,
+      totalCustomers,
+      ordersByStatus,
+      monthlyRevenue,
+      recentOrders,
     });
   })
 );
@@ -159,12 +193,13 @@ router.get(
   authenticate,
   authorize('freelancer'),
   asyncHandler(async (req, res) => {
-    const [orders, tickets] = await Promise.all([
+    const [orders, tickets, siteVisits] = await Promise.all([
       Order.find({ assignedTo: req.user!._id, isDeleted: false }).sort({ createdAt: -1 }),
       ServiceTicket.find({ assignedTo: req.user!._id, isDeleted: false }).sort({ createdAt: -1 }),
+      SiteVisit.find({ assignedTo: req.user!._id, isDeleted: false }).populate('user', 'name phone email').sort({ date: -1 }),
     ]);
 
-    sendSuccess(res, { orders, tickets });
+    sendSuccess(res, { orders, tickets, siteVisits });
   })
 );
 
@@ -205,7 +240,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const order = await Order.findOneAndUpdate(
       { _id: req.params.id, assignedTo: req.user!._id },
-      { status: 'completed' },
+      { status: 'delivered' },
       { new: true }
     );
     if (order) {

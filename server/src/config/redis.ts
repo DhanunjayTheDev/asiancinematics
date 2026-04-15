@@ -6,6 +6,8 @@ let redis: Redis | null = null;
 
 export const getRedis = (): Redis => {
   if (!redis) {
+    logger.info(`Connecting to Redis at ${config.redis.host}:${config.redis.port}`);
+    
     redis = new Redis({
       host: config.redis.host,
       port: config.redis.port,
@@ -20,8 +22,15 @@ export const getRedis = (): Redis => {
       },
     });
 
-    redis.on('connect', () => logger.info('Redis connected'));
-    redis.on('error', (err) => logger.error('Redis error:', err));
+    redis.on('connect', () => logger.info('✓ Redis connected'));
+    redis.on('ready', () => logger.info('✓ Redis ready for commands'));
+    redis.on('error', (err) => {
+      logger.error('✗ Redis error:', err.message || err);
+    });
+    redis.on('close', () => logger.warn('✗ Redis connection closed'));
+    redis.on('reconnecting', (info: any) => {
+      logger.warn(`Redis reconnecting... (attempt ${info.attempt})`);
+    });
   }
   return redis;
 };

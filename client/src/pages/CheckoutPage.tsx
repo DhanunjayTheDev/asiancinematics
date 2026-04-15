@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import type { Address } from '../types';
 import Loading from '../components/Loading';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -21,6 +25,8 @@ const CheckoutPage = () => {
     fullName: '', phone: '', addressLine1: '', addressLine2: '',
     city: '', state: '', pincode: '', label: 'Home',
   });
+  const headerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const subtotal = getTotal();
   const shipping = subtotal > 999 ? 0 : 99;
@@ -42,6 +48,46 @@ const CheckoutPage = () => {
       if (defaultAddr) setSelectedAddress(defaultAddr._id);
     }).catch(() => {});
   }, [isAuthenticated, items.length, navigate]);
+
+  // GSAP scroll animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power3.out',
+        });
+      }
+
+      if (contentRef.current) {
+        gsap.from(contentRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          delay: 0.1,
+          ease: 'power3.out',
+        });
+      }
+
+      gsap.utils.toArray('.checkout-section-animate').forEach((section: any) => {
+        gsap.from(section, {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 85%',
+            scrub: false,
+          },
+          ease: 'power3.out',
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, [items]);
 
   const handlePlaceOrder = async () => {
     let shippingAddress;
@@ -85,27 +131,30 @@ const CheckoutPage = () => {
 
   return (
     <>
-      <Helmet><title>Checkout | Asian Cinematics</title></Helmet>
+      <Helmet><title>Checkout | Pravara World Tech</title></Helmet>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">Checkout</h1>
+      <div className="min-h-screen bg-gradient-to-br from-black to-blue-950/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div ref={headerRef}>
+            <h1 className="text-2xl font-bold text-white mb-8">Checkout</h1>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div ref={contentRef} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             {/* Shipping Address */}
-            <div className="card">
-              <h2 className="font-semibold text-gray-900 mb-4">Shipping Address</h2>
+            <div className="checkout-section-animate bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-6">
+              <h2 className="font-semibold text-white mb-4">Shipping Address</h2>
 
               {addresses.length > 0 && (
                 <div className="space-y-3 mb-4">
                   {addresses.map((addr) => (
-                    <label key={addr._id} className={`flex items-start space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${selectedAddress === addr._id ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <label key={addr._id} className={`flex items-start space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${selectedAddress === addr._id ? 'border-yellow-400 bg-yellow-400/10' : 'border-blue-500/20 hover:border-blue-500/40'}`}>
                       <input type="radio" name="address" checked={selectedAddress === addr._id} onChange={() => { setSelectedAddress(addr._id); setShowNewAddress(false); }} className="mt-1" />
                       <div>
-                        <p className="font-medium text-sm">{addr.fullName} <span className="text-gray-400">({addr.label})</span></p>
-                        <p className="text-sm text-gray-500">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
-                        <p className="text-sm text-gray-500">{addr.city}, {addr.state} - {addr.pincode}</p>
-                        <p className="text-sm text-gray-500">{addr.phone}</p>
+                        <p className="font-medium text-sm text-white">{addr.fullName} <span className="text-gray-400">({addr.label})</span></p>
+                        <p className="text-sm text-gray-400">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
+                        <p className="text-sm text-gray-400">{addr.city}, {addr.state} - {addr.pincode}</p>
+                        <p className="text-sm text-gray-400">{addr.phone}</p>
                       </div>
                     </label>
                   ))}
@@ -114,40 +163,40 @@ const CheckoutPage = () => {
 
               <button
                 onClick={() => { setShowNewAddress(!showNewAddress); setSelectedAddress(''); }}
-                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                className="text-sm text-blue-400 hover:text-blue-300 font-medium transition"
               >
                 + Add New Address
               </button>
 
               {showNewAddress && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                  <input className="input-field" placeholder="Full Name *" value={newAddress.fullName} onChange={(e) => setNewAddress({ ...newAddress, fullName: e.target.value })} />
-                  <input className="input-field" placeholder="Phone *" value={newAddress.phone} onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} />
-                  <input className="input-field sm:col-span-2" placeholder="Address Line 1 *" value={newAddress.addressLine1} onChange={(e) => setNewAddress({ ...newAddress, addressLine1: e.target.value })} />
-                  <input className="input-field sm:col-span-2" placeholder="Address Line 2" value={newAddress.addressLine2} onChange={(e) => setNewAddress({ ...newAddress, addressLine2: e.target.value })} />
-                  <input className="input-field" placeholder="City *" value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} />
-                  <input className="input-field" placeholder="State *" value={newAddress.state} onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} />
-                  <input className="input-field" placeholder="Pincode *" value={newAddress.pincode} onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })} />
+                  <input className="bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Full Name *" value={newAddress.fullName} onChange={(e) => setNewAddress({ ...newAddress, fullName: e.target.value })} />
+                  <input className="bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Phone *" value={newAddress.phone} onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} />
+                  <input className="sm:col-span-2 bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Address Line 1 *" value={newAddress.addressLine1} onChange={(e) => setNewAddress({ ...newAddress, addressLine1: e.target.value })} />
+                  <input className="sm:col-span-2 bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Address Line 2" value={newAddress.addressLine2} onChange={(e) => setNewAddress({ ...newAddress, addressLine2: e.target.value })} />
+                  <input className="bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="City *" value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} />
+                  <input className="bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="State *" value={newAddress.state} onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} />
+                  <input className="bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Pincode *" value={newAddress.pincode} onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })} />
                 </div>
               )}
             </div>
 
             {/* Payment Method */}
-            <div className="card">
-              <h2 className="font-semibold text-gray-900 mb-4">Payment Method</h2>
+            <div className="checkout-section-animate bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-6">
+              <h2 className="font-semibold text-white mb-4">Payment Method</h2>
               <div className="space-y-3">
-                <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer ${paymentMethod === 'COD' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
+                <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-yellow-400 bg-yellow-400/10' : 'border-blue-500/20 hover:border-blue-500/40'}`}>
                   <input type="radio" name="payment" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
                   <div>
-                    <p className="font-medium text-sm">Cash on Delivery</p>
-                    <p className="text-xs text-gray-500">Pay when you receive your order</p>
+                    <p className="font-medium text-sm text-white">Cash on Delivery</p>
+                    <p className="text-xs text-gray-400">Pay when you receive your order</p>
                   </div>
                 </label>
-                <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer ${paymentMethod === 'online' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
+                <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === 'online' ? 'border-yellow-400 bg-yellow-400/10' : 'border-blue-500/20 hover:border-blue-500/40'}`}>
                   <input type="radio" name="payment" checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')} />
                   <div>
-                    <p className="font-medium text-sm">Online Payment</p>
-                    <p className="text-xs text-gray-500">Pay securely using UPI, Cards, or Net Banking</p>
+                    <p className="font-medium text-sm text-white">Online Payment</p>
+                    <p className="text-xs text-gray-400">Pay securely using UPI, Cards, or Net Banking</p>
                   </div>
                 </label>
               </div>
@@ -155,34 +204,35 @@ const CheckoutPage = () => {
           </div>
 
           {/* Summary */}
-          <div className="card h-fit sticky top-24">
-            <h3 className="font-semibold text-gray-900 mb-4">Order Summary</h3>
+          <div className="checkout-section-animate bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-6 h-fit sticky top-24">
+            <h3 className="font-semibold text-white mb-4">Order Summary</h3>
             <div className="space-y-3 mb-4">
               {items.map((item) => (
                 <div key={item.product._id} className="flex justify-between text-sm">
-                  <span className="text-gray-600 line-clamp-1 flex-1">{item.product.name} x{item.quantity}</span>
-                  <span className="font-medium ml-2">₹{(item.product.price * item.quantity).toLocaleString()}</span>
+                  <span className="text-gray-400 line-clamp-1 flex-1">{item.product.name} x{item.quantity}</span>
+                  <span className="font-medium text-gray-300 ml-2">₹{(item.product.price * item.quantity).toLocaleString()}</span>
                 </div>
               ))}
             </div>
-            <dl className="space-y-2 text-sm border-t border-gray-100 pt-3">
-              <div className="flex justify-between"><dt className="text-gray-500">Subtotal</dt><dd>₹{subtotal.toLocaleString()}</dd></div>
-              <div className="flex justify-between"><dt className="text-gray-500">Shipping</dt><dd>{shipping === 0 ? 'Free' : `₹${shipping}`}</dd></div>
-              <div className="flex justify-between"><dt className="text-gray-500">Tax (18%)</dt><dd>₹{tax.toLocaleString()}</dd></div>
-              <div className="border-t border-gray-100 pt-2 flex justify-between font-semibold text-gray-900">
-                <dt>Total</dt><dd className="text-lg">₹{total.toLocaleString()}</dd>
+            <dl className="space-y-2 text-sm border-t border-blue-500/20 pt-3">
+              <div className="flex justify-between text-gray-400"><dt>Subtotal</dt><dd className="text-gray-300">₹{subtotal.toLocaleString()}</dd></div>
+              <div className="flex justify-between text-gray-400"><dt>Shipping</dt><dd className="text-gray-300">{shipping === 0 ? 'Free' : `₹${shipping}`}</dd></div>
+              <div className="flex justify-between text-gray-400"><dt>Tax (18%)</dt><dd className="text-gray-300">₹{tax.toLocaleString()}</dd></div>
+              <div className="border-t border-blue-500/20 pt-2 flex justify-between font-semibold text-white">
+                <dt>Total</dt><dd className="text-lg text-yellow-400">₹{total.toLocaleString()}</dd>
               </div>
             </dl>
             <button
               onClick={handlePlaceOrder}
               disabled={loading || (!selectedAddress && !showNewAddress)}
-              className="btn-primary w-full mt-6"
+              className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition"
             >
               {loading ? 'Placing Order...' : 'Place Order'}
             </button>
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 };

@@ -44,17 +44,20 @@ const RegisterPage = () => {
   return (
     <>
       <Helmet>
-        <title>Register | Asian Cinematics</title>
+        <title>Register | Pravara World Tech</title>
       </Helmet>
 
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-            <p className="text-gray-600 mt-2">Join Asian Cinematics today</p>
+            <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <span className="text-white font-semibold">AC</span>
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Create Account</h1>
+            <p className="text-gray-500 mt-2">Join Pravara World Tech today</p>
           </div>
 
-          <div className="card p-8">
+          <div className="bg-white rounded-2xl border border-gray-200 p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

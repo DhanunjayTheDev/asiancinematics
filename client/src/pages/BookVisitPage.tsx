@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import api from '../lib/api';
+import CustomSelect from '../components/CustomSelect';
 
 const BookVisitPage = () => {
   const navigate = useNavigate();
@@ -52,59 +53,61 @@ const BookVisitPage = () => {
   return (
     <>
       <Helmet>
-        <title>Book a Site Visit | Asian Cinematics</title>
+        <title>Book a Site Visit | Pravara World Tech</title>
       </Helmet>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Book a Site Visit</h1>
-        <p className="text-gray-600 mb-8">Schedule a visit from our team to assess your requirements on-site.</p>
+      <div className="min-h-screen bg-gradient-to-br from-black to-blue-950/30">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">Book a Site Visit</h1>
+          <p className="text-gray-400 mb-8">Schedule a visit from our team to assess your requirements on-site.</p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
-              <input type="date" name="date" min={minDate} value={form.date} onChange={handleChange} required className="input-field" />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Preferred Date</label>
+                <input type="date" name="date" min={minDate} value={form.date} onChange={handleChange} required className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-400 transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Time Slot</label>
+                <CustomSelect
+                  value={form.timeSlot}
+                  onChange={(value) => setForm({ ...form, timeSlot: String(value) })}
+                  options={timeSlots.map((s) => ({ value: s, label: s }))}
+                  placeholder="Select a slot"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Time Slot</label>
-              <select name="timeSlot" value={form.timeSlot} onChange={handleChange} required className="input-field">
-                <option value="">Select a slot</option>
-                {timeSlots.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <input type="text" name="location.address" value={form.location.address} onChange={handleChange} required className="input-field" placeholder="Street address" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-              <input type="text" name="location.city" value={form.location.city} onChange={handleChange} required className="input-field" />
+              <label className="block text-sm font-medium text-gray-300 mb-2">Address</label>
+              <input type="text" name="location.address" value={form.location.address} onChange={handleChange} required className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" placeholder="Street address" />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-              <input type="text" name="location.state" value={form.location.state} onChange={handleChange} required className="input-field" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
-              <input type="text" name="location.pincode" value={form.location.pincode} onChange={handleChange} required className="input-field" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" />
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
-            <textarea name="notes" value={form.notes} onChange={handleChange} rows={3} className="input-field" placeholder="Any specific requirements or instructions..." />
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">City</label>
+                <input type="text" name="location.city" value={form.location.city} onChange={handleChange} required className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">State</label>
+                <input type="text" name="location.state" value={form.location.state} onChange={handleChange} required className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Pincode</label>
+                <input type="text" name="location.pincode" value={form.location.pincode} onChange={handleChange} required className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" />
+              </div>
+            </div>
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? 'Booking...' : 'Book Site Visit'}
-          </button>
-        </form>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Notes (optional)</label>
+              <textarea name="notes" value={form.notes} onChange={handleChange} rows={3} className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition resize-none" placeholder="Any specific requirements or instructions..." />
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50">
+              {loading ? 'Booking...' : 'Book Site Visit'}
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

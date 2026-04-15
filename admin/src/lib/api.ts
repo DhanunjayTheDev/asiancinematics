@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
@@ -11,7 +13,7 @@ let refreshPromise: Promise<string> | null = null;
 const refresh = async (): Promise<string> => {
   const refreshToken = localStorage.getItem('admin_refresh_token');
   if (!refreshToken) throw new Error('No refresh token');
-  const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken });
+  const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
   const { accessToken, refreshToken: newRefresh } = data.data;
   localStorage.setItem('admin_token', accessToken);
   localStorage.setItem('admin_refresh_token', newRefresh);

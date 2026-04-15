@@ -1,4 +1,5 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -20,10 +21,23 @@ import ContactPage from './pages/ContactPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import SolutionsPage from './pages/SolutionsPage';
+import StructuralWorksPage from './pages/StructuralWorksPage';
+import ProjectsPage from './pages/ProjectsPage';
+import BrandsPage from './pages/BrandsPage';
+import PartnerNetworkPage from './pages/PartnerNetworkPage';
+import ForumsPage from './pages/ForumsPage';
+import AboutPage from './pages/AboutPage';
 
 const App = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
       <main className="flex-1">
         <Routes>
@@ -31,8 +45,15 @@ const App = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:slug" element={<ProductDetailPage />} />
+          <Route path="/solutions" element={<SolutionsPage />} />
+          <Route path="/structural-works" element={<StructuralWorksPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/brands" element={<BrandsPage />} />
+          <Route path="/partner-network" element={<PartnerNetworkPage />} />
+          <Route path="/forums" element={<ForumsPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />

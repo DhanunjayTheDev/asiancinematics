@@ -12,7 +12,7 @@ export interface ISiteVisit extends Document {
   };
   purpose: string;
   notes?: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
   assignedTo?: mongoose.Types.ObjectId;
   isDeleted: boolean;
 }
@@ -32,8 +32,8 @@ const siteVisitSchema = new Schema<ISiteVisit>(
     notes: { type: String },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'completed', 'cancelled'],
-      default: 'pending',
+      enum: ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled'],
+      default: 'scheduled',
       index: true,
     },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'User' },
