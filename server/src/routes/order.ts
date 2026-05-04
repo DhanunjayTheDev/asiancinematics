@@ -75,7 +75,8 @@ router.post(
             tax,
             totalAmount,
             paymentMethod,
-            paymentStatus: paymentMethod === 'COD' ? 'pending' : 'pending',
+            status: paymentMethod === 'online' ? 'payment_pending' : 'pending',
+            paymentStatus: 'pending',
           },
         ],
         { session }
@@ -187,12 +188,13 @@ router.put(
 
     // Production-grade status transition validation
     const allowedTransitions: Record<string, string[]> = {
-      pending:    ['confirmed', 'processing', 'cancelled'],
-      confirmed:  ['processing', 'cancelled'],
-      processing: ['shipped', 'cancelled'],
-      shipped:    ['delivered'],
-      delivered:  [], // terminal state
-      cancelled:  [], // terminal state
+      pending:         ['confirmed', 'processing', 'cancelled'],
+      payment_pending: ['pending', 'cancelled'],
+      confirmed:       ['processing', 'cancelled'],
+      processing:      ['shipped', 'cancelled'],
+      shipped:         ['delivered'],
+      delivered:       [], // terminal state
+      cancelled:       [], // terminal state
     };
 
     const allowed = allowedTransitions[order.status] || [];
@@ -259,23 +261,119 @@ router.put(
   })
 );
 
-// PUT /api/v1/orders/:id/assign (admin)
+// PUT /api/v1/orders/:id/payment (customer: submit payment proof)
 router.put(
-  '/:id/assign',
+  '/:id/payment',
   authenticate,
-  authorize('super_admin'),
-  validate(assignOrderSchema),
   asyncHandler(async (req, res) => {
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { assignedTo: req.body.assignedTo },
-      { new: true }
-    ).populate('assignedTo', 'name');
+    const { utrNumber, paymentScreenshot } = req.body;
+    const order = await Order.findOne({ _id: req.params.id, user: req.user!._id, isDeleted: false });
     if (!order) throw new NotFoundError('Order not found');
 
-    await createNotification(req.body.assignedTo, 'Order Assigned', `Order ${order.orderNumber} has been assigned to you`, 'assignment', 'in_app', 'Order', order._id.toString());
-    await createAuditLog(req, 'ASSIGN_ORDER', 'Order', req.params.id, { assignedTo: req.body.assignedTo });
-    sendSuccess(res, order, 'Order assigned');
+    if (order.status !== 'payment_pending') {
+      throw new BadRequestError('This order is not awaiting payment details');
+    }
+
+    if (!utrNumber || !paymentScreenshot) {
+      throw new BadRequestError('UTR number and payment screenshot are required');
+    }
+
+    order.utrNumber = utrNumber;
+    order.paymentScreenshot = paymentScreenshot;
+    order.status = 'pending'; // Move to pending approval
+    await order.save();
+
+    await createNotification(
+      req.user!._id,
+      'Payment Submitted',
+      `Payment details for order ${order.orderNumber} have been submitted. Awaiting admin verification.`,
+      'order',
+      'in_app',
+      'Order',
+      order._id.toString()
+    );
+
+    sendSuccess(res, order, 'Payment details submitted successfully. Awaiting admin approval.');
+  })
+);
+
+// PUT /api/v1/orders/:id/approve (admin: approve pending order)
+router.put(
+  '/:id/approve',
+  authenticate,
+  authorize('super_admin', 'employee'),
+  asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (!order || order.isDeleted) throw new NotFoundError('Order not found');
+
+    if (order.status !== 'pending' && order.status !== 'payment_pending') {
+      throw new BadRequestError('Only pending orders can be approved');
+    }
+
+    order.status = 'confirmed';
+    order.paymentStatus = 'paid';
+    await order.save();
+
+    const user = await User.findById(order.user);
+    if (user) {
+      await sendStatusUpdateEmail(user.email, 'Order', order.orderNumber, 'confirmed');
+    }
+
+    await createNotification(
+      order.user.toString(),
+      'Order Confirmed',
+      `Your order ${order.orderNumber} has been confirmed and is being processed.`,
+      'order',
+      'in_app',
+      'Order',
+      order._id.toString()
+    );
+
+    await createAuditLog(req, 'APPROVE_ORDER', 'Order', req.params.id, {});
+    sendSuccess(res, order, 'Order approved successfully');
+  })
+);
+
+// PUT /api/v1/orders/:id/reject (admin: reject pending order)
+router.put(
+  '/:id/reject',
+  authenticate,
+  authorize('super_admin', 'employee'),
+  asyncHandler(async (req, res) => {
+    const { reason } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order || order.isDeleted) throw new NotFoundError('Order not found');
+
+    if (order.status !== 'pending' && order.status !== 'payment_pending') {
+      throw new BadRequestError('Only pending orders can be rejected');
+    }
+
+    // Restore stock
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+    }
+
+    order.status = 'cancelled';
+    order.cancelReason = reason || 'Rejected by admin';
+    await order.save();
+
+    const user = await User.findById(order.user);
+    if (user) {
+      await sendStatusUpdateEmail(user.email, 'Order', order.orderNumber, 'cancelled');
+    }
+
+    await createNotification(
+      order.user.toString(),
+      'Order Rejected',
+      `Your order ${order.orderNumber} has been rejected. Reason: ${order.cancelReason}`,
+      'order',
+      'in_app',
+      'Order',
+      order._id.toString()
+    );
+
+    await createAuditLog(req, 'REJECT_ORDER', 'Order', req.params.id, { reason });
+    sendSuccess(res, order, 'Order rejected');
   })
 );
 

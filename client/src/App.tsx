@@ -1,9 +1,11 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
+import AuthModal from './components/AuthModal';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useAuthStore } from './store/authStore';
 
 import LandingPage from './pages/LandingPage';
 import ProductsPage from './pages/ProductsPage';
@@ -31,10 +33,28 @@ import AboutPage from './pages/AboutPage';
 
 const App = () => {
   const location = useLocation();
+  const { isAuthenticated } = useAuthStore();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [hasShownModal, setHasShownModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Show auth modal on first load if not authenticated
+  useEffect(() => {
+    const sessionKey = 'auth_modal_shown';
+    const modalShown = sessionStorage.getItem(sessionKey);
+
+    if (!isAuthenticated && !modalShown && !hasShownModal) {
+      const timer = setTimeout(() => {
+        setShowAuthModal(true);
+        setHasShownModal(true);
+        sessionStorage.setItem(sessionKey, 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, hasShownModal]);
 
   return (
     <div className="min-h-screen flex flex-col bg-black">
@@ -82,6 +102,7 @@ const App = () => {
       </main>
       <Footer />
       <WhatsAppButton />
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 };

@@ -69,6 +69,12 @@ const config = {
     path: process.env.UPLOAD_PATH || 'uploads',
   },
 
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    apiKey: process.env.CLOUDINARY_API_KEY || '',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || '',
+  },
+
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
     max: parseInt(process.env.RATE_LIMIT_MAX || '2000', 10),

@@ -26,10 +26,12 @@ export interface IOrder extends Document {
   shippingCost: number;
   tax: number;
   totalAmount: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'payment_pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   paymentMethod: 'COD' | 'online';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentId?: string;
+  utrNumber?: string;
+  paymentScreenshot?: string;
   assignedTo?: mongoose.Types.ObjectId;
   notes?: string;
   cancelReason?: string;
@@ -68,7 +70,7 @@ const orderSchema = new Schema<IOrder>(
     totalAmount: { type: Number, required: true, min: 0 },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'],
+      enum: ['pending', 'payment_pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
       index: true,
     },
@@ -84,6 +86,8 @@ const orderSchema = new Schema<IOrder>(
       index: true,
     },
     paymentId: { type: String },
+    utrNumber: { type: String },
+    paymentScreenshot: { type: String },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'User' },
     notes: { type: String },
     cancelReason: { type: String },
