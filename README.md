@@ -1,4 +1,4 @@
-# Asian Cinematics — Business Operating System
+# Asian Cinematics Business Operating System
 
 A full-stack enterprise SaaS platform built with the MERN stack (MongoDB, Express, React, Node.js) + TypeScript.
 

@@ -48,7 +48,7 @@ const ProjectsPage = () => {
           <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Portfolio</span>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our <span className="text-yellow-400">Projects</span></h1>
           <p className="text-gray-400 text-lg">
-            Explore our completed projects across India — from luxury home theatres to large tensile structures.
+            Explore our completed projects across India from luxury home theatres to large tensile structures.
           </p>
         </div>
       </section>

@@ -5,48 +5,67 @@ import { sendSuccess, sendPaginated } from '../utils/response';
 import { NotFoundError } from '../utils/errors';
 import { validate } from '../middleware/validate';
 import { authenticate, authorize, optionalAuth } from '../middleware/auth';
+import { upload } from '../middleware/upload';
 import { z } from 'zod';
 
 const router = Router();
 
-const createServiceRequestSchema = z.object({
-  product: z.string().min(1),
-  name: z.string().min(1),
-  location: z.string().min(1),
-  timeline: z.string().optional(),
-  reference: z.string().optional(),
-  brand: z.string().optional(),
-  budget: z.string().optional(),
-  roomSize: z.string().optional(),
-  length: z.number().optional(),
-  width: z.number().optional(),
-  height: z.number().optional(),
-  dedicatedHT: z.string().optional(),
-  livingRoomHT: z.string().optional(),
-  towers: z.string().optional(),
-  inwalls: z.string().optional(),
-  inceilings: z.string().optional(),
-  onwalls: z.string().optional(),
-  needAtmos: z.string().optional(),
-  setupType: z.string().optional(),
-  projector: z.string().optional(),
-  tv: z.string().optional(),
-  preferredBrands: z.string().optional(),
-  targetBudget: z.string().optional(),
-  duration: z.string().optional(),
+const createSchema = z.object({
+  body: z.object({
+    formType: z.string().default('security'),
+    name: z.string().min(1, 'Name is required'),
+    contact: z.string().min(1, 'Contact is required'),
+    state: z.string().optional(),
+    district: z.string().optional(),
+    address: z.string().optional(),
+    categories: z.array(z.string()).optional(),
+    systemType: z.string().optional(),
+    serviceRequestType: z.string().optional(),
+    serviceAmount: z.number().optional(),
+    startDate: z.string().optional(),
+    specs: z.string().optional(),
+    needsDiscussion: z.boolean().optional(),
+    // legacy
+    product: z.string().optional(),
+    location: z.string().optional(),
+    timeline: z.string().optional(),
+    reference: z.string().optional(),
+    brand: z.string().optional(),
+    budget: z.string().optional(),
+  }),
 });
 
 // POST /api/v1/service-requests
 router.post(
   '/',
   optionalAuth,
-  validate(createServiceRequestSchema),
+  validate(createSchema),
   asyncHandler(async (req, res) => {
-    const data = { ...req.body };
+    const data: any = { ...req.body };
     if (req.user) data.user = req.user._id;
+    if (data.startDate) data.startDate = new Date(data.startDate);
+    const sr = await ServiceRequest.create(data);
+    sendSuccess(res, sr, 'Service request submitted', 201);
+  })
+);
 
-    const serviceRequest = await ServiceRequest.create(data);
-    sendSuccess(res, serviceRequest, 'Service request submitted', 201);
+// POST /api/v1/service-requests/:id/payment — submit UTR + screenshot
+router.post(
+  '/:id/payment',
+  optionalAuth,
+  upload.single('paymentScreenshot'),
+  asyncHandler(async (req, res) => {
+    const { utrNumber } = req.body;
+    const sr = await ServiceRequest.findById(req.params.id);
+    if (!sr || sr.isDeleted) throw new NotFoundError('Service request not found');
+
+    sr.utrNumber = utrNumber;
+    if (req.file) {
+      sr.paymentScreenshot = `/uploads/${req.file.filename}`;
+    }
+    sr.paymentStatus = 'submitted';
+    await sr.save();
+    sendSuccess(res, sr, 'Payment details submitted');
   })
 );
 
@@ -60,9 +79,13 @@ router.get(
     const limit = parseInt(req.query.limit as string) || 20;
     const skip = (page - 1) * limit;
     const status = req.query.status as string;
+    const paymentStatus = req.query.paymentStatus as string;
+    const formType = req.query.formType as string;
 
     const filter: Record<string, unknown> = { isDeleted: false };
-    if (status) filter.status = status;
+    if (status && status !== 'all') filter.status = status;
+    if (paymentStatus && paymentStatus !== 'all') filter.paymentStatus = paymentStatus;
+    if (formType && formType !== 'all') filter.formType = formType;
 
     const [requests, total] = await Promise.all([
       ServiceRequest.find(filter)
@@ -98,8 +121,10 @@ router.put(
   authenticate,
   authorize('super_admin'),
   asyncHandler(async (req, res) => {
-    const { status, notes, assignedTo } = req.body;
-    const updateData: Record<string, unknown> = { status };
+    const { status, notes, assignedTo, paymentStatus } = req.body;
+    const updateData: Record<string, unknown> = {};
+    if (status) updateData.status = status;
+    if (paymentStatus) updateData.paymentStatus = paymentStatus;
     if (notes) updateData.notes = notes;
     if (assignedTo) updateData.assignedTo = assignedTo;
 

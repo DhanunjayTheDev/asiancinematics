@@ -33,7 +33,7 @@ const works = [
   },
   {
     title: 'Pool & Courtyard Covers',
-    desc: 'Elegant tensile covers for swimming pools, courtyards, and garden spaces — functional and beautiful.',
+    desc: 'Elegant tensile covers for swimming pools, courtyards, and garden spaces functional and beautiful.',
     image: null,
     features: ['Water Drainage Design', 'HDPE or PVDF', 'Custom Shape', 'Aesthetic Finish'],
     badge: null,
@@ -71,7 +71,7 @@ const StructuralWorksPage = () => (
           Tensile & <span className="text-yellow-400">Structural Works</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-          From carports to amphitheatres — we design and install premium tensile structures across India with precision engineering and quality materials.
+          From carports to amphitheatres we design and install premium tensile structures across India with precision engineering and quality materials.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/inquiry" className="px-8 py-3 bg-yellow-400 text-black font-bold rounded-full hover:bg-yellow-300 transition-colors">

@@ -6,13 +6,13 @@ const team = [
   {
     name: 'Praveen Kumar Yougi A',
     role: 'Founder & CEO',
-    bio: 'Visionary entrepreneur with 15+ years in smart technology integration, AV systems, and architectural solutions.',
+    bio: 'Visionary entrepreneur with 23+ years in smart technology integration, AV systems, and architectural solutions.',
     phones: ['9849697886', '9966167886'],
   },
 ];
 
 const milestones = [
-  { year: '2010', event: 'Founded Asian Cinematics in Hyderabad' },
+  { year: '2003', event: 'Founded Asian Cinematics in Hyderabad' },
   { year: '2014', event: 'Expanded to Structural & Tensile Works division' },
   { year: '2017', event: 'Launched Pravara World Tech brand' },
   { year: '2019', event: 'Reached 500+ successful project completions' },
@@ -22,10 +22,10 @@ const milestones = [
 ];
 
 const stats = [
-  { value: '1000+', label: 'Projects Completed' },
+  { value: '2500+', label: 'Projects Completed' },
   { value: '50+', label: 'Cities Covered' },
-  { value: '15+', label: 'Years of Experience' },
-  { value: '200+', label: 'Partner Network' },
+  { value: '23+', label: 'Years of Experience' },
+  { value: '200+', label: 'Brand Partners With Us' },
 ];
 
 const offerings = [
@@ -49,7 +49,7 @@ const AboutPage = () => (
     <section className="py-24 px-6 text-center border-b border-yellow-500/20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none" />
       <div className="relative max-w-4xl mx-auto">
-        <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Est. 2010 | Hyderabad, India</span>
+        <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Est. 2003 | Hyderabad, India</span>
         <h1 className="text-5xl md:text-6xl font-bold mb-6">
           About <span className="text-yellow-400">Pravara World Tech</span>
         </h1>
@@ -57,7 +57,7 @@ const AboutPage = () => (
           <span className="text-white font-semibold">Asian Cinematics | Pravara World Tech | Ecop World International</span>
         </p>
         <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-          Where Vision Meets Innovation — We specialize in premium lifestyle & smart technology solutions for modern homes and businesses across India.
+          Where Vision Meets Innovation We specialize in premium lifestyle & smart technology solutions for modern homes and businesses across India.
         </p>
       </div>
     </section>

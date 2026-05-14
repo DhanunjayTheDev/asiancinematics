@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IInquiry extends Document {
   user?: mongoose.Types.ObjectId;
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   subject: string;
   message: string;
@@ -20,7 +20,7 @@ const inquirySchema = new Schema<IInquiry>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, lowercase: true, trim: true },
+    email: { type: String, required: false, lowercase: true, trim: true },
     phone: { type: String, required: true, trim: true },
     subject: { type: String, required: true, trim: true, maxlength: 200 },
     message: { type: String, required: true },

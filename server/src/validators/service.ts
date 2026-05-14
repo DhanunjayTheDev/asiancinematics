@@ -49,7 +49,7 @@ export const createSiteVisitSchema = z.object({
 export const createInquirySchema = z.object({
   body: z.object({
     name: z.string().min(1),
-    email: z.string().email(),
+    email: z.string().email().optional().or(z.literal('')),
     phone: z.string().min(10),
     subject: z.string().min(1).max(200),
     message: z.string().min(1),

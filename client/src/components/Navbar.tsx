@@ -3,7 +3,7 @@ import { FiMenu, FiX, FiShoppingCart, FiUser, FiChevronDown } from 'react-icons/
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
-import logo from '../assets/pravaratechlogo.jpeg';
+import logo from '../assets/pravaraworldmainlogo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

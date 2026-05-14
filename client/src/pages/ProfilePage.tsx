@@ -35,6 +35,18 @@ const ProfilePage = () => {
   const [tickets, setTickets] = useState<ServiceTicket[]>([]);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
+  const [showAddAddress, setShowAddAddress] = useState(false);
+  const [addingAddress, setAddingAddress] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    label: 'Home', fullName: '', phone: '', addressLine1: '', addressLine2: '',
+    city: '', state: '', pincode: '',
+  });
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [editForm, setEditForm] = useState({
+    label: 'Home', fullName: '', phone: '', addressLine1: '', addressLine2: '',
+    city: '', state: '', pincode: '',
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     if (tab === 'addresses') {
@@ -90,6 +102,55 @@ const ProfilePage = () => {
     logout();
     navigate('/');
     toast.success('Logged out successfully');
+  };
+
+  const handleAddAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAddress.fullName || !newAddress.phone || !newAddress.addressLine1 || !newAddress.city || !newAddress.state || !newAddress.pincode) {
+      return toast.error('Please fill all required fields');
+    }
+    setAddingAddress(true);
+    try {
+      const { data } = await api.post('/addresses', { ...newAddress, isDefault: addresses.length === 0 });
+      setAddresses(prev => [...prev, data.data]);
+      setShowAddAddress(false);
+      setNewAddress({ label: 'Home', fullName: '', phone: '', addressLine1: '', addressLine2: '', city: '', state: '', pincode: '' });
+      toast.success('Address added');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to add address');
+    } finally {
+      setAddingAddress(false);
+    }
+  };
+
+  const handleStartEdit = (a: Address) => {
+    setEditingAddress(a);
+    setEditForm({
+      label: a.label || 'Home',
+      fullName: a.fullName,
+      phone: a.phone,
+      addressLine1: a.addressLine1,
+      addressLine2: a.addressLine2 || '',
+      city: a.city,
+      state: a.state,
+      pincode: a.pincode,
+    });
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAddress) return;
+    setSavingEdit(true);
+    try {
+      const { data } = await api.put(`/addresses/${editingAddress._id}`, editForm);
+      setAddresses(prev => prev.map(a => a._id === editingAddress._id ? data.data : a));
+      setEditingAddress(null);
+      toast.success('Address updated');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to update address');
+    } finally {
+      setSavingEdit(false);
+    }
   };
 
   const handleDeleteAddress = async (id: string) => {
@@ -283,29 +344,185 @@ const ProfilePage = () => {
           )}
 
           {tab === 'addresses' && (
-            <div className="profile-section-animate">
+            <div className="profile-section-animate space-y-4">
+              {/* Header row */}
+              <div className="flex items-center justify-between">
+                <p className="text-gray-400 text-sm">{addresses.length} saved address{addresses.length !== 1 ? 'es' : ''}</p>
+                <button
+                  onClick={() => setShowAddAddress(p => !p)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+                >
+                  {showAddAddress ? 'Cancel' : '+ Add Address'}
+                </button>
+              </div>
+
+              {/* Add Address Form */}
+              {showAddAddress && (
+                <div className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-5">
+                  <h3 className="text-white font-semibold mb-4">New Address</h3>
+                  <form onSubmit={handleAddAddress} className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Label</label>
+                        <select
+                          value={newAddress.label}
+                          onChange={e => setNewAddress(p => ({ ...p, label: e.target.value }))}
+                          className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition"
+                        >
+                          <option value="Home">Home</option>
+                          <option value="Work">Work</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Full Name *</label>
+                        <input type="text" placeholder="Full name" value={newAddress.fullName}
+                          onChange={e => setNewAddress(p => ({ ...p, fullName: e.target.value }))}
+                          className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Phone *</label>
+                      <input type="tel" placeholder="Phone number" value={newAddress.phone}
+                        onChange={e => setNewAddress(p => ({ ...p, phone: e.target.value }))}
+                        className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Address Line 1 *</label>
+                      <input type="text" placeholder="House no, Street, Area" value={newAddress.addressLine1}
+                        onChange={e => setNewAddress(p => ({ ...p, addressLine1: e.target.value }))}
+                        className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Address Line 2</label>
+                      <input type="text" placeholder="Landmark (optional)" value={newAddress.addressLine2}
+                        onChange={e => setNewAddress(p => ({ ...p, addressLine2: e.target.value }))}
+                        className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">City *</label>
+                        <input type="text" placeholder="City" value={newAddress.city}
+                          onChange={e => setNewAddress(p => ({ ...p, city: e.target.value }))}
+                          className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">State *</label>
+                        <input type="text" placeholder="State" value={newAddress.state}
+                          onChange={e => setNewAddress(p => ({ ...p, state: e.target.value }))}
+                          className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Pincode *</label>
+                        <input type="text" placeholder="Pincode" value={newAddress.pincode}
+                          onChange={e => setNewAddress(p => ({ ...p, pincode: e.target.value }))}
+                          className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400 transition" required />
+                      </div>
+                    </div>
+                    <button type="submit" disabled={addingAddress}
+                      className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-semibold py-2.5 rounded-lg transition">
+                      {addingAddress ? 'Saving...' : 'Save Address'}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* Address List */}
               {dataLoading ? (
                 <Loading text="Loading addresses..." />
               ) : addresses.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No saved addresses.</p>
+                <p className="text-gray-400 text-center py-8">No saved addresses. Add one above.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {addresses.map((a) => (
                     <div key={a._id} className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-4 relative">
-                      {a.isDefault && (
-                        <span className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-400 text-xs font-semibold px-2 py-1 rounded-full border border-yellow-500/40">
-                          Default
-                        </span>
+                      {editingAddress?._id === a._id ? (
+                        /* ── Inline Edit Form ── */
+                        <form onSubmit={handleSaveEdit} className="space-y-3">
+                          <p className="text-white font-semibold text-sm mb-2">Edit Address</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Label</label>
+                              <select value={editForm.label} onChange={e => setEditForm(p => ({ ...p, label: e.target.value }))}
+                                className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition">
+                                <option value="Home">Home</option>
+                                <option value="Work">Work</option>
+                                <option value="Other">Other</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Full Name *</label>
+                              <input type="text" value={editForm.fullName} onChange={e => setEditForm(p => ({ ...p, fullName: e.target.value }))}
+                                className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Phone *</label>
+                            <input type="tel" value={editForm.phone} onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))}
+                              className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Address Line 1 *</label>
+                            <input type="text" value={editForm.addressLine1} onChange={e => setEditForm(p => ({ ...p, addressLine1: e.target.value }))}
+                              className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Landmark</label>
+                            <input type="text" value={editForm.addressLine2} onChange={e => setEditForm(p => ({ ...p, addressLine2: e.target.value }))}
+                              className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" />
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">City *</label>
+                              <input type="text" value={editForm.city} onChange={e => setEditForm(p => ({ ...p, city: e.target.value }))}
+                                className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">State *</label>
+                              <input type="text" value={editForm.state} onChange={e => setEditForm(p => ({ ...p, state: e.target.value }))}
+                                className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Pincode *</label>
+                              <input type="text" value={editForm.pincode} onChange={e => setEditForm(p => ({ ...p, pincode: e.target.value }))}
+                                className="w-full bg-black/40 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-400 transition" required />
+                            </div>
+                          </div>
+                          <div className="flex gap-2 pt-1">
+                            <button type="submit" disabled={savingEdit}
+                              className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-semibold py-2 rounded-lg text-xs transition">
+                              {savingEdit ? 'Saving...' : 'Save'}
+                            </button>
+                            <button type="button" onClick={() => setEditingAddress(null)}
+                              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg text-xs transition">
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        /* ── Address Display ── */
+                        <>
+                          {a.isDefault && (
+                            <span className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-400 text-xs font-semibold px-2 py-1 rounded-full border border-yellow-500/40">
+                              Default
+                            </span>
+                          )}
+                          <p className="font-semibold text-white text-sm">{a.label || 'Address'}</p>
+                          <p className="text-sm text-gray-300 mt-1">{a.fullName} · {a.phone}</p>
+                          <p className="text-sm text-gray-400">{a.addressLine1}{a.addressLine2 ? `, ${a.addressLine2}` : ''}</p>
+                          <p className="text-sm text-gray-400">{a.city}, {a.state} {a.pincode}</p>
+                          <div className="flex gap-4 mt-3">
+                            <button onClick={() => handleStartEdit(a)}
+                              className="text-blue-400 text-xs hover:text-blue-300 transition font-medium">
+                              Edit
+                            </button>
+                            <button onClick={() => handleDeleteAddress(a._id)}
+                              className="text-red-400 text-xs hover:text-red-300 transition">
+                              Delete
+                            </button>
+                          </div>
+                        </>
                       )}
-                      <p className="font-medium text-white">{a.label || 'Address'}</p>
-                      <p className="text-sm text-gray-400">{a.addressLine1}, {a.city}</p>
-                      <p className="text-sm text-gray-400">{a.state} - {a.pincode}</p>
-                      <button
-                        onClick={() => handleDeleteAddress(a._id)}
-                        className="text-red-400 text-sm mt-2 hover:text-red-300 transition"
-                      >
-                        Delete
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -379,7 +596,7 @@ const ProfilePage = () => {
                             year: 'numeric',
                           })}
                         </p>
-                        <p className="text-sm text-gray-400">{v.timeSlot} — {v.location.city}</p>
+                        <p className="text-sm text-gray-400">{v.timeSlot} {v.location.city}</p>
                       </div>
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap ${

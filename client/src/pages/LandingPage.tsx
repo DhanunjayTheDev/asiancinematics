@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useRef, useState } from 'react';
-import { FiArrowRight, FiMonitor, FiShield, FiHeadphones, FiPhone, FiHome, FiLock, FiZap, FiLayers, FiVolume2, FiGrid, FiEye, FiMusic, FiVideo, FiFilm, FiGlobe, FiPenTool, FiTool, FiSun, FiTruck } from 'react-icons/fi';
+import { FiArrowRight, FiShield, FiHeadphones, FiPhone, FiHome, FiLock, FiZap, FiLayers, FiVolume2, FiGrid, FiEye, FiMusic, FiVideo, FiFilm, FiGlobe, FiPenTool, FiTool, FiSun, FiTruck, FiBox, FiCode, FiCpu, FiLayout, FiMonitor,  } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,6 +9,7 @@ import api from '../lib/api';
 import { cacheManager } from '../lib/cache';
 import type { Product, Service } from '../types';
 import CustomSelect from '../components/CustomSelect';
+import bannerImage from '../assets/BANNERASIANPRAVARA.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -139,15 +140,51 @@ const LandingPage = () => {
   }, [loading]);
 
   const serviceHighlights = [
-    { icon: <FiHome className="w-6 h-6" />, title: 'Smart Security', desc: 'Advanced CCTV and security systems for complete protection and peace of mind.' },
-    { icon: <FiVolume2 className="w-6 h-6" />, title: 'Smart Entertainment', desc: 'Premium home theatre and AV systems for immersive entertainment experiences.' },
-    { icon: <FiLayers className="w-6 h-6" />, title: 'Smart Living', desc: 'Home automation and smart systems that integrate all your devices seamlessly.' },
-    { icon: <FiGrid className="w-6 h-6" />, title: 'Decorative & Lighting', desc: 'Premium decorative solutions and smart lighting for stunning interior aesthetics.' },
+      {
+    icon: <FiShield className="w-6 h-6" />,
+    title: '🔐 Security Systems',
+    desc: 'CCTV Surveillance, Intrusion Alarms, Solar Fencing.',
+  },
+  {
+    icon: <FiCpu className="w-6 h-6" />,
+    title: '🏡 Home Automation',
+    desc: 'Lighting Automation, Curtain Controls, Gate Automation, Smart Controls.',
+  },
+  {
+    icon: <FiMonitor className="w-6 h-6" />,
+    title: '🎬 Home Theater Solutions',
+    desc: 'Customized Cinema Rooms, Living Room Theater, Premium Audio Systems.',
+  },
+  {
+    icon: <FiPenTool className="w-6 h-6" />,
+    title: '🎨 Interior & Decorative Designs',
+    desc: 'Stretch Ceilings, Galaxy Star Lighting, Premium Interior Finishes.',
+  },
+  {
+    icon: <FiSun className="w-6 h-6" />,
+    title: '💡 Lighting Solutions',
+    desc: 'Smart Lighting, Decorative Lighting, Architectural Lighting.',
+  },
+  {
+    icon: <FiBox className="w-6 h-6" />,
+    title: '🏗 Structural Works',
+    desc: 'Pergolas, Car Parking Structures, Sheds, Tensile Canopies.',
+  },
+  {
+    icon: <FiLayout className="w-6 h-6" />,
+    title: '📐 Design & Engineering Services',
+    desc: '2D Layout Drawings, Electrical Schematics, Structural Planning, Custom Room Designs.',
+  },
+  {
+    icon: <FiCode className="w-6 h-6" />,
+    title: '💻 Web Development',
+    desc: 'Business Websites, Portfolio Sites, Admin Dashboards, Responsive Web Applications.',
+  },
   ];
 
   const stats = [
-    { value: '1200+', label: 'Installations' },
-    { value: '15+', label: 'Years Experience' },
+    { value: '2500+', label: 'Installations' },
+    { value: '23+', label: 'Years Experience' },
     { value: '24/7', label: 'Support' },
     { value: '4.9⭐', label: 'Customer Rating' },
   ];
@@ -176,59 +213,49 @@ const LandingPage = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-black overflow-hidden min-h-screen flex items-center">
-        <div className="absolute inset-0 z-0" style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="grad"%3E%3Cstop offset="0%25" style="stop-color:rgba(59,130,246,0.03)" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="100" height="100" fill="url(%23grad)"%3E%3C/rect%3E%3C/svg%3E")',
-        }} />
-        
-        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="hero-overline inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
-                <p className="text-sm font-medium text-blue-400">✨ WHAT YOU EXPECT HERE SOLUTIONS MATTER</p>
-              </div>
-              
-              <h1 className="hero-title text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                Smart Security &
-                <br />
-                <span className="text-yellow-400">Entertainment</span>
-                <br />
-                <span className="text-yellow-400">·</span> Smart Living
-              </h1>
-              
-              <p className="hero-subtitle text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
-                Pravara World Tech delivers comprehensive smart home solutions including cinema AV, acoustics, decoratives, intelligent lighting, and advanced security - all under one roof.
-              </p>
-              
-              <div className="hero-buttons flex flex-nowrap gap-3 mb-8 items-center">
-                <Link to="/products" className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold transition-colors whitespace-nowrap">
-                  <span>Explore Products</span>
-                  <FiArrowRight className="w-4 h-4" />
-                </Link>
-                <Link to="/book-visit" className="inline-flex items-center gap-2 px-8 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-full font-semibold transition-colors whitespace-nowrap">
-                  <span>Book Demo</span>
-                </Link>
-                <a href="https://wa.me/919849697886" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-colors whitespace-nowrap">
-                  <FaWhatsapp className="w-4 h-4" />
-                  <span>WhatsApp Us</span>
-                </a>
-              </div>
+      <section ref={heroRef} className="relative overflow-hidden min-h-screen flex items-center" style={{
+        backgroundImage: `url(${bannerImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
+        <div className="absolute inset-0 bg-black/60 z-0" />
 
-              <div className="flex gap-8 text-sm">
-                <div className="flex items-center gap-2 text-gray-300">
-                  <FiShield className="w-5 h-5 text-yellow-400" />
-                  <span>Warranty Assured</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-300">
-                  <FiHeadphones className="w-5 h-5 text-yellow-400" />
-                  <span>Expert Support</span>
-                </div>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
+          <div className="max-w-2xl">
+            <div className="hero-overline inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
+              <p className="text-sm font-medium text-blue-400">WHAT YOU EXPECT HERE SOLUTIONS MATTER</p>
             </div>
 
-            <div className="relative hidden lg:block h-96 bg-gradient-to-br from-blue-900/30 to-yellow-900/20 rounded-2xl border border-blue-500/20 overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-3/4 h-3/4 bg-gradient-conic from-blue-500 via-purple-500 to-yellow-400 rounded-xl opacity-20 blur-3xl" />
+            <h1 className="hero-title text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Smart Security & <span className="text-yellow-400">Entertainment</span> <span className="text-yellow-400">·</span> Smart Living
+            </h1>
+
+            <p className="hero-subtitle text-lg text-gray-300 mb-8 leading-relaxed">
+              Pravara World Tech delivers comprehensive smart home solutions including cinema AV, acoustics, decoratives, intelligent lighting, and advanced security - all under one roof.
+            </p>
+
+            <div className="hero-buttons flex flex-nowrap gap-3 mb-8 items-center">
+              <Link to="/products" className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold transition-colors whitespace-nowrap">
+                <span>Explore Products</span>
+                <FiArrowRight className="w-4 h-4" />
+              </Link>
+              <Link to="/book-visit" className="inline-flex items-center gap-2 px-8 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-full font-semibold transition-colors whitespace-nowrap">
+                <span>Book Demo</span>
+              </Link>
+              <a href="https://wa.me/919849697886" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-colors whitespace-nowrap">
+                <FaWhatsapp className="w-4 h-4" />
+                <span>WhatsApp Us</span>
+              </a>
+            </div>
+
+            <div className="flex gap-8 text-sm">
+              <div className="flex items-center gap-2 text-gray-300">
+                <FiShield className="w-5 h-5 text-yellow-400" />
+                <span>Warranty Assured</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300">
+                <FiHeadphones className="w-5 h-5 text-yellow-400" />
+                <span>Expert Support</span>
               </div>
             </div>
           </div>
@@ -240,7 +267,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <p className="text-3xl font-bold text-yellow-400">1200+</p>
+              <p className="text-3xl font-bold text-yellow-400">2500+</p>
               <p className="text-sm text-gray-400 mt-2">Installations Done</p>
             </div>
             <div className="text-center">
@@ -248,7 +275,7 @@ const LandingPage = () => {
               <p className="text-sm text-gray-400 mt-2">Customer Rating</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-yellow-400">15+</p>
+              <p className="text-3xl font-bold text-yellow-400">23+</p>
               <p className="text-sm text-gray-400 mt-2">Years Experience</p>
             </div>
             <div className="text-center">
@@ -267,8 +294,6 @@ const LandingPage = () => {
               { icon: FiMusic, label: 'PA & Music Systems' },
               { icon: FiVideo, label: 'Video Door Phone' },
               { icon: FiZap, label: 'Solar Fence' },
-              { icon: FiFilm, label: 'Pravara World Tech' },
-              { icon: FiGlobe, label: 'Pravara World Tech' },
               { icon: FiLock, label: 'Smart Security Systems' },
               { icon: FiFilm, label: 'Home Theater Design' },
               { icon: FiZap, label: 'Fiber Optic Lighting' },
@@ -346,23 +371,151 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Product Categories */}
+      {/* Product Categories Section */}
       <section className="bg-gradient-to-b from-black to-blue-950 py-24 lg:py-32 border-t border-blue-500/20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          {/* Header */}
+          <div className="text-center mb-20">
             <p className="text-blue-400 text-sm font-semibold mb-3">WHAT WE OFFER</p>
-            <h2 className="text-4xl lg:text-5xl font-bold text-white">Explore Our Product Categories</h2>
-            <p className="text-gray-400 mt-6">Premium quality, professionally installed end-to-end services</p>
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Explore Our Product Categories</h2>
+            <p className="text-gray-300 max-w-3xl mx-auto text-lg mb-4">
+              Premium Quality. Complete Solutions. Professionally Delivered.
+            </p>
+            <p className="text-gray-400 max-w-3xl mx-auto">
+              At Pravara World Tech, we don't just supply products we deliver complete, end-to-end solutions designed to transform your space into a smart, secure, and immersive environment. Every category is carefully curated with top-tier products, supported by expert design, installation, customization, and after-service ensuring performance, reliability, and long-term value.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-            {projectCategories.map((cat, i) => (
-              <div key={i} className="group bg-black/50 border border-blue-500/20 rounded-xl p-6 hover:border-yellow-400/50 hover:bg-black/60 transition-all cursor-pointer">
-                <div className="text-blue-400 mb-3">{cat.icon}</div>
-                <h3 className="font-semibold text-white mb-2">{cat.title}</h3>
-                <p className="text-sm text-gray-400">{cat.desc}</p>
-              </div>
-            ))}
+          {/* Service Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Security Systems */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">🔐</div>
+              <h3 className="text-xl font-bold text-white mb-2">Security Systems</h3>
+              <p className="text-gray-400 mb-4">Advanced protection solutions built for total peace of mind.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• CCTV Surveillance Systems</li>
+                <li>• Intrusion Alarm Systems</li>
+                <li>• Solar Fencing Solutions</li>
+                <li>• Remote Monitoring & Mobile Access</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">🛡️ Smart protection for homes, businesses, and large-scale properties.</p>
+            </div>
+
+            {/* Smart Home Automation */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">🏡</div>
+              <h3 className="text-xl font-bold text-white mb-2">Smart Home Automation</h3>
+              <p className="text-gray-400 mb-4">Control your space with intelligence and ease.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• Smart Lighting & Scene Control</li>
+                <li>• Curtain & Blind Automation</li>
+                <li>• Smart Gate & Door Access</li>
+                <li>• Centralized App-Based Control</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">⚡ Convenience, efficiency, and futuristic living all in one system.</p>
+            </div>
+
+            {/* Home Theater & Audio */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">🎬</div>
+              <h3 className="text-xl font-bold text-white mb-2">Home Theater & Audio Solutions</h3>
+              <p className="text-gray-400 mb-4">Bring cinematic excellence into your home.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• Customized Home Theatre Rooms</li>
+                <li>• Living Room Cinema Setups</li>
+                <li>• Dolby Atmos & Surround Sound Systems</li>
+                <li>• Acoustic Treatment & Soundproofing</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">🎧 Engineered for immersive audio-visual experiences.</p>
+            </div>
+
+            {/* Interior & Decorative */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">🎨</div>
+              <h3 className="text-xl font-bold text-white mb-2">Interior & Decorative Designs</h3>
+              <p className="text-gray-400 mb-4">Where aesthetics meet innovation.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• Stretch Ceilings</li>
+                <li>• Galaxy Star Lighting Designs</li>
+                <li>• Premium Wall & Ceiling Finishes</li>
+                <li>• Customized Decorative Concepts</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">✨ Transform ordinary spaces into extraordinary environments.</p>
+            </div>
+
+            {/* Lighting Solutions */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">💡</div>
+              <h3 className="text-xl font-bold text-white mb-2">Lighting Solutions</h3>
+              <p className="text-gray-400 mb-4">Perfect lighting for every mood and purpose.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• Smart Lighting Systems</li>
+                <li>• Architectural & Ambient Lighting</li>
+                <li>• Decorative Lighting Installations</li>
+                <li>• Energy-Efficient Solutions</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">💫 Enhancing atmosphere through intelligent illumination.</p>
+            </div>
+
+            {/* Structural Works */}
+            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all">
+              <div className="text-3xl mb-4">🏗</div>
+              <h3 className="text-xl font-bold text-white mb-2">Structural Works</h3>
+              <p className="text-gray-400 mb-4">Strong, stylish, and built to last.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                <li>• Pergolas & Outdoor Structures</li>
+                <li>• Car Parking Sheds</li>
+                <li>• Tensile Fabric Canopies</li>
+                <li>• Custom Fabrication Works</li>
+              </ul>
+              <p className="text-yellow-400 text-sm font-semibold">🏗️ Durability meets modern architectural design.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Extended Expertise Section */}
+      <section className="bg-black py-24 lg:py-32 border-t border-blue-500/20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Our Extended Expertise</h2>
+            <p className="text-gray-300 text-lg">Design • Engineering • Digital Growth</p>
+            <p className="text-gray-400 max-w-3xl mx-auto mt-4">
+              At Asian Cinematics, we go beyond execution we provide complete design, technical engineering, and digital growth solutions for both residential and commercial projects.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Design & Engineering */}
+            <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-3xl mb-4">🏗️</div>
+              <h3 className="text-2xl font-bold text-white mb-4">Design & Engineering Services</h3>
+              <h4 className="text-lg font-semibold text-yellow-400 mb-3">📐 Design Drawings & Planning</h4>
+              <p className="text-gray-400 text-sm mb-4">Precision-driven planning for perfect execution.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-6">
+                <li>• 2D Layout Drawings (Home Theatre, Security, Automation)</li>
+                <li>• Electrical & Wiring Schematics</li>
+                <li>• Structural & Installation Planning</li>
+                <li>• Custom Room Design Concepts</li>
+              </ul>
+              <p className="text-blue-400 text-sm font-semibold">📊 Plan smart. Execute perfectly.</p>
+            </div>
+
+            {/* 3D Rendering */}
+            <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-3xl mb-4">🖥️</div>
+              <h3 className="text-2xl font-bold text-white mb-4">3D Rendering & Visualization</h3>
+              <h4 className="text-lg font-semibold text-yellow-400 mb-3">✨ Experience Your Project Before Execution</h4>
+              <p className="text-gray-400 text-sm mb-4">See your vision come to life with photorealistic renders.</p>
+              <ul className="text-sm text-gray-300 space-y-2 mb-6">
+                <li>• Photorealistic 3D Interior Renders</li>
+                <li>• Home Theatre Visualization</li>
+                <li>• Lighting & Acoustic Simulation</li>
+                <li>• Client Presentation Designs</li>
+              </ul>
+              <p className="text-blue-400 text-sm font-semibold">✨ See it. Feel it. Approve it before execution.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -570,7 +723,7 @@ const LandingPage = () => {
                   className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                 >
                   <FiArrowRight className="w-5 h-5" />
-                  Submit Inquiry — It's Free
+                  Submit Inquiry It's Free
                 </Link>
               </form>
             </div>

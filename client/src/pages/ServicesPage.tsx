@@ -1,16 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { FiArrowRight, FiPhone, FiMail, FiMapPin, FiCheck, FiAward, FiTrendingUp, FiUsers, FiTarget, FiGlobe, FiFilm, FiVolume2, FiHome, FiLock, FiLayers, FiHexagon, FiShoppingBag, FiSun, FiCreditCard, FiVideo, FiSettings, FiCalendar, FiLink, FiImage } from 'react-icons/fi';
+import { FiArrowRight, FiPhone, FiMail, FiMapPin, FiCheck, FiAward, FiTrendingUp, FiUsers, FiTarget, FiGlobe, FiFilm, FiVolume2, FiHome, FiLock, FiLayers, FiHexagon, FiShoppingBag, FiSun, FiCreditCard, FiVideo, FiSettings, FiCalendar, FiLink, FiImage, FiZap } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../lib/api';
 import { cacheManager } from '../lib/cache';
 import type { Service } from '../types';
 import Loading from '../components/Loading';
+import SecurityServiceRequestModal from '../components/SecurityServiceRequestModal';
+import LightingServiceRequestModal from '../components/LightingServiceRequestModal';
+import InteriorServiceRequestModal from '../components/InteriorServiceRequestModal';
+import SmartHomeServiceRequestModal from '../components/SmartHomeServiceRequestModal';
+import HomeTheaterServiceRequestModal from '../components/HomeTheaterServiceRequestModal';
+import StructuralServiceRequestModal from '../components/StructuralServiceRequestModal';
 
 const ServicesPage = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showLightingModal, setShowLightingModal] = useState(false);
+  const [showInteriorModal, setShowInteriorModal] = useState(false);
+  const [showSmartHomeModal, setShowSmartHomeModal] = useState(false);
+  const [showHomeTheaterModal, setShowHomeTheaterModal] = useState(false);
+  const [showStructuralModal, setShowStructuralModal] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -95,7 +107,7 @@ const ServicesPage = () => {
               </div>
               <h1 className="text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">Where Vision Meets Innovation</h1>
               <p className="text-xl text-gray-300 mt-4 max-w-3xl mx-auto leading-relaxed">
-                Premium lifestyle & smart technology solutions with 15+ years of expertise, serving 1200+ satisfied customers across India.
+                Premium lifestyle & smart technology solutions with 23+ years of expertise, serving 2500+ satisfied customers across India.
               </p>
             </div>
 
@@ -104,6 +116,171 @@ const ServicesPage = () => {
               <p className="text-gray-300 mb-2 flex items-center justify-center gap-2"><FiUsers className="w-5 h-5 text-yellow-400" /> <span className="font-semibold text-white">Founder & Visionary</span></p>
               <p className="text-lg text-blue-400 font-semibold">Praveen Kumar Yougi A</p>
               <p className="text-gray-400 text-sm mt-1">Asian Cinematics | Pravara World Tech | Ecop World International</p>
+            </div>
+          </div>
+        </div>
+
+        {/* What We Offer */}
+        <div className="py-20 border-b border-blue-500/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <p className="text-blue-400 text-sm font-semibold mb-3">🔷 WHAT WE OFFER</p>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Explore Our Product Categories</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg mb-4">Premium Quality. Complete Solutions. Professionally Delivered.</p>
+              <p className="text-gray-400 max-w-3xl mx-auto">
+                At Pravara World Tech, we don't just supply products we deliver complete, end-to-end solutions designed to transform your space into a smart, secure, and immersive environment.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">🔐</div>
+                <h3 className="text-xl font-bold text-white mb-2">Security Systems</h3>
+                <p className="text-gray-400 mb-4">Advanced protection solutions built for total peace of mind.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• CCTV Surveillance Systems</li>
+                  <li>• Intrusion Alarm Systems</li>
+                  <li>• Solar Fencing Solutions</li>
+                  <li>• Remote Monitoring & Mobile Access</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">🛡️ Smart protection for homes, businesses, and large-scale properties.</p>
+                <button
+                  onClick={() => setShowSecurityModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">🏡</div>
+                <h3 className="text-xl font-bold text-white mb-2">Smart Home Automation</h3>
+                <p className="text-gray-400 mb-4">Control your space with intelligence and ease.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• Smart Lighting & Scene Control</li>
+                  <li>• Curtain & Blind Automation</li>
+                  <li>• Smart Gate & Door Access</li>
+                  <li>• Centralized App-Based Control</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">⚡ Convenience, efficiency, and futuristic living all in one system.</p>
+                <button
+                  onClick={() => setShowSmartHomeModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-black text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">🎬</div>
+                <h3 className="text-xl font-bold text-white mb-2">Home Theater & Audio Solutions</h3>
+                <p className="text-gray-400 mb-4">Bring cinematic excellence into your home.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• Customized Home Theatre Rooms</li>
+                  <li>• Living Room Cinema Setups</li>
+                  <li>• Dolby Atmos & Surround Sound Systems</li>
+                  <li>• Acoustic Treatment & Soundproofing</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">🎧 Engineered for immersive audio-visual experiences.</p>
+                <button
+                  onClick={() => setShowHomeTheaterModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-black text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">🎨</div>
+                <h3 className="text-xl font-bold text-white mb-2">Interior & Decorative Designs</h3>
+                <p className="text-gray-400 mb-4">Where aesthetics meet innovation.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• Stretch Ceilings</li>
+                  <li>• Galaxy Star Lighting Designs</li>
+                  <li>• Premium Wall & Ceiling Finishes</li>
+                  <li>• Customized Decorative Concepts</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">✨ Transform ordinary spaces into extraordinary environments.</p>
+                <button
+                  onClick={() => setShowInteriorModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">💡</div>
+                <h3 className="text-xl font-bold text-white mb-2">Lighting Solutions</h3>
+                <p className="text-gray-400 mb-4">Perfect lighting for every mood and purpose.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• Smart Lighting Systems</li>
+                  <li>• Architectural & Ambient Lighting</li>
+                  <li>• Decorative Lighting Installations</li>
+                  <li>• Energy-Efficient Solutions</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">💫 Enhancing atmosphere through intelligent illumination.</p>
+                <button
+                  onClick={() => setShowLightingModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
+                <div className="text-3xl mb-4">🏗</div>
+                <h3 className="text-xl font-bold text-white mb-2">Structural Works</h3>
+                <p className="text-gray-400 mb-4">Strong, stylish, and built to last.</p>
+                <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                  <li>• Pergolas & Outdoor Structures</li>
+                  <li>• Car Parking Sheds</li>
+                  <li>• Tensile Fabric Canopies</li>
+                  <li>• Custom Fabrication Works</li>
+                </ul>
+                <p className="text-yellow-400 text-sm font-semibold mb-5">🏗️ Durability meets modern architectural design.</p>
+                <button
+                  onClick={() => setShowStructuralModal(true)}
+                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold rounded-lg transition"
+                >
+                  <FiZap className="w-4 h-4" /> Service Request
+                </button>
+              </div>
+            </div>
+
+            {/* Extended Expertise */}
+            <div className="bg-gradient-to-b from-blue-900/10 to-black border border-blue-500/20 rounded-2xl p-12">
+              <div className="text-center mb-12">
+                <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4">🎬 Our Extended Expertise</h3>
+                <p className="text-gray-300">Design • Engineering • Digital Growth</p>
+                <p className="text-gray-400 max-w-2xl mx-auto mt-4">We go beyond execution providing complete design, technical engineering, and digital growth solutions for both residential and commercial projects.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
+                  <div className="text-3xl mb-4">🏗️</div>
+                  <h4 className="text-lg font-semibold text-yellow-400 mb-3">📐 Design Drawings & Planning</h4>
+                  <p className="text-gray-400 text-sm mb-4">Precision-driven planning for perfect execution.</p>
+                  <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                    <li>• 2D Layout Drawings (Home Theatre, Security, Automation)</li>
+                    <li>• Electrical & Wiring Schematics</li>
+                    <li>• Structural & Installation Planning</li>
+                    <li>• Custom Room Design Concepts</li>
+                  </ul>
+                  <p className="text-blue-400 text-sm font-semibold">📊 Plan smart. Execute perfectly.</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
+                  <div className="text-3xl mb-4">🖥️</div>
+                  <h4 className="text-lg font-semibold text-yellow-400 mb-3">✨ 3D Rendering & Visualization</h4>
+                  <p className="text-gray-400 text-sm mb-4">Experience your project before execution.</p>
+                  <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                    <li>• Photorealistic 3D Interior Renders</li>
+                    <li>• Home Theatre Visualization</li>
+                    <li>• Lighting & Acoustic Simulation</li>
+                    <li>• Client Presentation Designs</li>
+                  </ul>
+                  <p className="text-blue-400 text-sm font-semibold">✨ See it. Feel it. Approve it before execution.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -123,44 +300,6 @@ const ServicesPage = () => {
                   <h3 className="text-xl font-bold text-white mb-2">{specialty.title}</h3>
                   <p className="text-gray-400">{specialty.desc}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Services */}
-        <div className="py-20 border-b border-blue-500/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Featured Services</h2>
-              <p className="text-lg text-gray-400">Explore detailed service offerings</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.slice(0, 6).map((service) => (
-                <Link key={service._id} to={`/services/${service.slug}`} className="group bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-2">
-                  {service.image && (
-                    <div className="aspect-video bg-gray-800 overflow-hidden">
-                      <img src={`/uploads/${service.image}`} alt={service.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
-                    </div>
-                  )}
-                  <div className="p-8">
-                    <div className="inline-block px-4 py-2 bg-blue-500/20 border border-blue-500/40 rounded-full mb-4">
-                      <span className="text-sm font-semibold text-blue-400">Service</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-3">{service.name}</h3>
-                    <p className="text-sm text-gray-300 line-clamp-2 mb-6 leading-relaxed">
-                      {service.shortDescription || service.description}
-                    </p>
-                    {service.price && (
-                      <p className="text-yellow-400 font-bold text-lg mb-4">Starting at ₹{service.price.toLocaleString()}</p>
-                    )}
-                    <span className="text-blue-400 text-sm font-semibold inline-flex items-center gap-2 group-hover:text-blue-300 transition-colors">
-                      <span>Learn More</span>
-                      <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </div>
-                </Link>
               ))}
             </div>
           </div>
@@ -346,6 +485,13 @@ const ServicesPage = () => {
           </div>
         </div>
       </div>
+
+      <SecurityServiceRequestModal isOpen={showSecurityModal} onClose={() => setShowSecurityModal(false)} />
+      <LightingServiceRequestModal isOpen={showLightingModal} onClose={() => setShowLightingModal(false)} />
+      <InteriorServiceRequestModal isOpen={showInteriorModal} onClose={() => setShowInteriorModal(false)} />
+      <SmartHomeServiceRequestModal isOpen={showSmartHomeModal} onClose={() => setShowSmartHomeModal(false)} />
+      <HomeTheaterServiceRequestModal isOpen={showHomeTheaterModal} onClose={() => setShowHomeTheaterModal(false)} />
+      <StructuralServiceRequestModal isOpen={showStructuralModal} onClose={() => setShowStructuralModal(false)} />
     </>
   );
 };

@@ -33,7 +33,7 @@ const solutions = [
   {
     icon: FiHome,
     title: 'Home Automation',
-    desc: 'Intelligent smart home solutions — control lighting, climate, security, and entertainment from one interface.',
+    desc: 'Intelligent smart home solutions control lighting, climate, security, and entertainment from one interface.',
     tags: ['Smart Lighting', 'Climate Control', 'Voice Control', 'App Integration'],
     color: 'from-blue-500/20 to-cyan-500/20',
     border: 'border-blue-500/30',
@@ -92,7 +92,7 @@ const SolutionsPage = () => (
           Our <span className="text-yellow-400">Solutions</span>
         </h1>
         <p className="text-gray-400 text-lg">
-          Where Vision Meets Innovation — Premium lifestyle & smart technology solutions for modern homes and businesses.
+          Where Vision Meets Innovation Premium lifestyle & smart technology solutions for modern homes and businesses.
         </p>
       </div>
     </section>

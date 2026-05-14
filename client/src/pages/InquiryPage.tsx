@@ -144,7 +144,7 @@ const InquiryPage = () => {
               disabled={loading} 
               className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-semibold rounded-lg transition-colors"
             >
-              {loading ? 'Submitting...' : 'Submit Inquiry — It\'s Free'}
+              {loading ? 'Submitting...' : 'Submit Inquiry It\'s Free'}
             </button>
           </form>
         </div>

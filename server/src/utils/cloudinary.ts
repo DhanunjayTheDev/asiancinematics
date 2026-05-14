@@ -24,7 +24,7 @@ export const uploadToCloudinary = async (
   options: UploadOptions = {}
 ): Promise<any> => {
   try {
-    const defaultOptions = {
+    const defaultOptions: UploadOptions = {
       folder: 'asiancinematics',
       resource_type: 'auto',
       ...options,

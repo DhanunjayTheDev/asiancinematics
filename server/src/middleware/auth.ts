@@ -97,7 +97,7 @@ export const optionalAuth = async (
       };
     }
   } catch {
-    // optional auth — continue without user
+    // optional auth continue without user
   }
   next();
 };
