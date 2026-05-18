@@ -9,18 +9,21 @@ const partnerTypes = [
     title: 'Dealer / Distributor',
     desc: 'Authorized dealers for our product range with competitive pricing, margins, and marketing support.',
     perks: ['Competitive dealer pricing', 'Marketing collaterals', 'Technical training', 'Priority support'],
+    img: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=60',
   },
   {
     icon: FiTrendingUp,
     title: 'Channel Partner',
     desc: 'Refer projects and earn commissions. Ideal for architects, interior designers, and contractors.',
     perks: ['Attractive commission structure', 'Lead management support', 'Co-branding opportunities', 'Dedicated partner manager'],
+    img: 'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&auto=format&fit=crop&q=60',
   },
   {
     icon: FiAward,
     title: 'Business Associate',
     desc: 'Long-term strategic alliance for organizations looking to include our solutions in their offerings.',
     perks: ['Joint go-to-market strategy', 'Exclusive territory rights', 'Revenue sharing model', 'Brand co-ownership'],
+    img: 'https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=600&auto=format&fit=crop&q=60',
   },
 ];
 
@@ -64,14 +67,35 @@ const PartnerNetworkPage = () => {
       </Helmet>
 
       {/* Hero */}
-      <section className="py-20 px-6 text-center border-b border-yellow-500/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-green-500/5 to-transparent pointer-events-none" />
-        <div className="relative max-w-3xl mx-auto">
-          <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">🤝 Grow Together</span>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Partner <span className="text-yellow-400">Network</span></h1>
-          <p className="text-gray-400 text-lg">
-            Join our growing network of dealers, channel partners, and business associates across India. Leverage our brand, products, and expertise.
-          </p>
+      <section className="relative min-h-[380px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1400&auto=format&fit=crop&q=60"
+          alt="Partner Network"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/75" />
+        <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">🤝 Grow Together</span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">Partner <span className="text-yellow-400">Network</span></h1>
+              <p className="text-gray-300 text-lg max-w-xl">
+                Join our growing network of dealers, channel partners, and business associates across India. Leverage our brand, products, and expertise to grow your business.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              {[
+                { value: '200+', label: 'Active Partners' },
+                { value: '50+', label: 'Cities' },
+                { value: '23+', label: 'Years' },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-black/50 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-5">
+                  <p className="text-3xl font-bold text-yellow-400">{stat.value}</p>
+                  <p className="text-gray-400 text-xs mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -81,20 +105,28 @@ const PartnerNetworkPage = () => {
           <h2 className="text-3xl font-bold text-center mb-12">Partnership <span className="text-yellow-400">Models</span></h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {partnerTypes.map((pt) => (
-              <div key={pt.title} className="bg-gray-900/50 border border-gray-700/50 rounded-2xl p-6 hover:border-yellow-500/50 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center mb-4">
-                  <pt.icon className="w-6 h-6 text-yellow-400" />
+              <div key={pt.title} className="bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-yellow-500/50 transition-all group">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={pt.img} alt={pt.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                  <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-lg bg-yellow-400/20 backdrop-blur-sm border border-yellow-400/30 flex items-center justify-center">
+                      <pt.icon className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">{pt.title}</h3>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3">{pt.title}</h3>
-                <p className="text-sm text-gray-400 mb-5">{pt.desc}</p>
-                <ul className="space-y-2">
-                  {pt.perks.map((perk) => (
-                    <li key={perk} className="flex items-center gap-2 text-xs text-gray-400">
-                      <FiCheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
+                <div className="p-6">
+                  <p className="text-sm text-gray-400 mb-5">{pt.desc}</p>
+                  <ul className="space-y-2">
+                    {pt.perks.map((perk) => (
+                      <li key={perk} className="flex items-center gap-2 text-xs text-gray-400">
+                        <FiCheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+                        {perk}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>

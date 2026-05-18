@@ -41,24 +41,46 @@ const ForumsPage = () => {
       </Helmet>
 
       {/* Hero */}
-      <section className="py-16 px-6 text-center border-b border-yellow-500/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent pointer-events-none" />
-        <div className="relative max-w-3xl mx-auto">
-          <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Community</span>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Pravara <span className="text-yellow-400">Forums</span>
-          </h1>
-          <p className="text-gray-400 text-lg mb-8">
-            Connect with professionals and enthusiasts. Ask questions, share experiences, and learn from the community.
-          </p>
-          <div className="relative max-w-lg mx-auto">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-            <input
-              value={searchQ}
-              onChange={(e) => setSearchQ(e.target.value)}
-              placeholder="Search discussions..."
-              className="w-full bg-gray-900 border border-gray-700 rounded-full px-5 pl-11 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500"
-            />
+      <section className="relative min-h-[340px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1400&auto=format&fit=crop&q=60"
+          alt="Pravara Forums Community"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/78" />
+        <div className="relative max-w-7xl mx-auto px-6 py-16 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="text-center lg:text-left">
+              <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Community</span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                Pravara <span className="text-yellow-400">Forums</span>
+              </h1>
+              <p className="text-gray-300 text-lg mb-6 max-w-xl">
+                Connect with professionals and enthusiasts. Ask questions, share experiences, and learn from the community.
+              </p>
+              <div className="relative max-w-lg">
+                <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                <input
+                  value={searchQ}
+                  onChange={(e) => setSearchQ(e.target.value)}
+                  placeholder="Search discussions..."
+                  className="w-full bg-black/60 backdrop-blur border border-yellow-500/30 rounded-full px-5 pl-11 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { value: '2,400+', label: 'Members' },
+                { value: '1,200+', label: 'Discussions' },
+                { value: '8,500+', label: 'Replies' },
+                { value: '50+', label: 'Cities' },
+              ].map((s) => (
+                <div key={s.label} className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-bold text-yellow-400">{s.value}</p>
+                  <p className="text-xs text-gray-400 mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

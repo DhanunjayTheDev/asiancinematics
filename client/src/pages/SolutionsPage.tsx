@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { FiHome, FiShield, FiZap, FiMonitor, FiLayers, FiEye, FiWifi, FiSun, FiArrowRight } from 'react-icons/fi';
+import { FiHome, FiShield, FiZap, FiMonitor, FiLayers, FiWifi, FiSun, FiArrowRight } from 'react-icons/fi';
 
 const solutions = [
   {
@@ -11,6 +11,7 @@ const solutions = [
     color: 'from-red-500/20 to-orange-500/20',
     border: 'border-red-500/30',
     link: '/products?category=home-theatre',
+    img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiLayers,
@@ -20,6 +21,7 @@ const solutions = [
     color: 'from-purple-500/20 to-pink-500/20',
     border: 'border-purple-500/30',
     link: '/products?category=decoratives',
+    img: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiLayers,
@@ -29,6 +31,7 @@ const solutions = [
     color: 'from-yellow-500/20 to-green-500/20',
     border: 'border-yellow-500/30',
     link: '/products?category=epoxy',
+    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiHome,
@@ -38,6 +41,7 @@ const solutions = [
     color: 'from-blue-500/20 to-cyan-500/20',
     border: 'border-blue-500/30',
     link: '/products?category=home-automation',
+    img: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiZap,
@@ -47,6 +51,7 @@ const solutions = [
     color: 'from-emerald-500/20 to-teal-500/20',
     border: 'border-emerald-500/30',
     link: '/products?category=smart-home',
+    img: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiShield,
@@ -56,6 +61,7 @@ const solutions = [
     color: 'from-red-500/20 to-yellow-500/20',
     border: 'border-red-400/30',
     link: '/products?category=security',
+    img: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiWifi,
@@ -65,6 +71,7 @@ const solutions = [
     color: 'from-indigo-500/20 to-blue-500/20',
     border: 'border-indigo-500/30',
     link: '/products?category=networking',
+    img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&auto=format&fit=crop&q=60',
   },
   {
     icon: FiSun,
@@ -74,6 +81,7 @@ const solutions = [
     color: 'from-amber-500/20 to-yellow-400/20',
     border: 'border-amber-500/30',
     link: '/products?category=lighting',
+    img: 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=500&auto=format&fit=crop&q=60',
   },
 ];
 
@@ -84,16 +92,40 @@ const SolutionsPage = () => (
     </Helmet>
 
     {/* Hero */}
-    <section className="py-20 px-6 text-center border-b border-yellow-500/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none" />
-      <div className="relative max-w-3xl mx-auto">
-        <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Complete Ecosystem</span>
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Our <span className="text-yellow-400">Solutions</span>
-        </h1>
-        <p className="text-gray-400 text-lg">
-          Where Vision Meets Innovation Premium lifestyle & smart technology solutions for modern homes and businesses.
-        </p>
+    <section className="relative min-h-[360px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1400&auto=format&fit=crop&q=60"
+        alt="Our Solutions"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/78" />
+      <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="text-center lg:text-left">
+            <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Complete Ecosystem</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Our <span className="text-yellow-400">Solutions</span>
+            </h1>
+            <p className="text-gray-300 text-lg max-w-xl">
+              Where Vision Meets Innovation — premium lifestyle & smart technology solutions for modern homes and businesses.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { icon: '🎬', label: 'Home Theatre' },
+              { icon: '🏠', label: 'Smart Home' },
+              { icon: '🔐', label: 'Security' },
+              { icon: '✨', label: 'Decoratives' },
+              { icon: '💡', label: 'Lighting' },
+              { icon: '⛺', label: 'Structural' },
+            ].map((item) => (
+              <div key={item.label} className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl px-3 py-3 flex items-center gap-2">
+                <span className="text-xl">{item.icon}</span>
+                <p className="text-sm font-bold text-white">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 
@@ -104,23 +136,29 @@ const SolutionsPage = () => (
           <Link
             key={sol.title}
             to={sol.link}
-            className={`group relative bg-gradient-to-br ${sol.color} border ${sol.border} rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300 cursor-pointer`}
+            className={`group relative bg-gradient-to-br ${sol.color} border ${sol.border} rounded-2xl overflow-hidden hover:scale-[1.02] hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col`}
           >
-            <div className="mb-4 w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
-              <sol.icon className="w-6 h-6 text-yellow-400" />
+            <div className="relative h-36 overflow-hidden flex-shrink-0">
+              <img src={sol.img} alt={sol.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute bottom-3 left-3 w-9 h-9 rounded-lg bg-black/40 backdrop-blur-sm flex items-center justify-center border border-white/10">
+                <sol.icon className="w-4 h-4 text-yellow-400" />
+              </div>
             </div>
-            <h3 className="text-lg font-bold mb-2 text-white">{sol.title}</h3>
-            <p className="text-sm text-gray-400 mb-4 leading-relaxed">{sol.desc}</p>
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {sol.tags.map((tag) => (
-                <span key={tag} className="text-[10px] px-2 py-0.5 bg-white/5 rounded-full text-gray-400">
-                  {tag}
-                </span>
-              ))}
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="text-base font-bold mb-2 text-white">{sol.title}</h3>
+              <p className="text-xs text-gray-400 mb-3 leading-relaxed flex-1">{sol.desc}</p>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {sol.tags.map((tag) => (
+                  <span key={tag} className="text-[10px] px-2 py-0.5 bg-white/5 rounded-full text-gray-400 border border-white/10">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <span className="text-xs text-yellow-400 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Explore <FiArrowRight className="w-3 h-3" />
+              </span>
             </div>
-            <span className="text-xs text-yellow-400 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-              Explore <FiArrowRight className="w-3 h-3" />
-            </span>
           </Link>
         ))}
       </div>

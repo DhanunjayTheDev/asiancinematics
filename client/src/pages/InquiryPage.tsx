@@ -51,10 +51,41 @@ const InquiryPage = () => {
         <title>Submit an Inquiry | Pravara World Tech</title>
       </Helmet>
 
-      <div className="min-h-screen bg-black py-12">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Submit an Inquiry</h1>
-          <p className="text-gray-400 mb-8">Tell us about your project and we&apos;ll get back to you with a custom solution within 24 hours.</p>
+      <div className="min-h-screen bg-black">
+        {/* Hero */}
+        <section className="relative min-h-[320px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&auto=format&fit=crop&q=60"
+            alt="Submit Inquiry"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/78" />
+          <div className="relative max-w-7xl mx-auto px-6 py-16 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Free Consultation</span>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Submit an <span className="text-yellow-400">Inquiry</span></h1>
+                <p className="text-gray-300 text-lg max-w-xl">
+                  Tell us about your project and we'll get back to you with a custom solution within 24 hours.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: '24h', label: 'Response Time' },
+                  { value: 'Free', label: 'Consultation' },
+                  { value: '100%', label: 'Confidential' },
+                ].map((s) => (
+                  <div key={s.label} className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl p-4 text-center">
+                    <p className="text-xl font-bold text-yellow-400">{s.value}</p>
+                    <p className="text-[11px] text-gray-400 mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
           <form onSubmit={handleSubmit} className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-lg p-8 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -151,6 +182,7 @@ const InquiryPage = () => {
       </div>
     </>
   );
+
 };
 
 export default InquiryPage;

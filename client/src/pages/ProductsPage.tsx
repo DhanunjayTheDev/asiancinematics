@@ -157,19 +157,41 @@ const ProductsPage = () => {
 
       <div className="min-h-screen bg-black">
         {/* Hero Section */}
-        <div className="bg-gradient-to-b from-blue-950/30 to-black py-20 border-b border-blue-500/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
-                <p className="text-sm font-semibold text-blue-400">✨ PREMIUM PRODUCTS | PRAVARA WORLD TECH ✨</p>
+        <section className="relative min-h-[380px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1400&auto=format&fit=crop&q=60"
+            alt="Premium Products"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/78" />
+          <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">✨ Premium Products · Pravara World Tech</span>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">Explore <span className="text-yellow-400">Premium Products</span></h1>
+                <p className="text-gray-300 text-lg max-w-xl">
+                  Discover our extensive range of cinema, smart home, and security products — genuine, certified, and backed by full warranties.
+                </p>
               </div>
-              <h1 className="text-5xl lg:text-6xl font-bold text-white mb-4">Explore Premium Products</h1>
-              <p className="text-xl text-gray-300 mt-4 max-w-3xl mx-auto">
-                Discover our extensive range of cinema, smart home, and security products. All items are genuine, certified, and backed by full warranties.
-              </p>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: '🎬', label: 'Home Theatre', sub: 'Dolby Atmos Systems' },
+                  { icon: '🏠', label: 'Smart Home', sub: 'Automation & IoT' },
+                  { icon: '🔐', label: 'Security', sub: 'CCTV & Access Control' },
+                  { icon: '💡', label: 'Lighting', sub: 'Architectural & LED' },
+                ].map((item) => (
+                  <div key={item.label} className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl p-4 flex items-center gap-3 hover:border-yellow-500/50 transition-colors">
+                    <span className="text-2xl">{item.icon}</span>
+                    <div>
+                      <p className="text-sm font-bold text-white">{item.label}</p>
+                      <p className="text-[10px] text-gray-400">{item.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Why Buy From Us */}
         <div className="py-20 border-b border-blue-500/20">

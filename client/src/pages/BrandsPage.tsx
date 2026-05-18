@@ -68,14 +68,30 @@ const BrandsPage = () => (
     </Helmet>
 
     {/* Hero */}
-    <section className="py-20 px-6 text-center border-b border-yellow-500/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none" />
-      <div className="relative max-w-3xl mx-auto">
-        <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Authorized Partner</span>
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">Our <span className="text-yellow-400">Brands</span></h1>
-        <p className="text-gray-400 text-lg">
-          We partner with the world's leading technology brands to bring you the best in quality, performance, and reliability.
-        </p>
+    <section className="relative min-h-[360px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1400&auto=format&fit=crop&q=60"
+        alt="Our Brands"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/78" />
+      <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="text-center lg:text-left">
+            <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Authorized Partner</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Our <span className="text-yellow-400">Brands</span></h1>
+            <p className="text-gray-300 text-lg max-w-xl">
+              We partner with the world's leading technology brands to bring you the best in quality, performance, and reliability.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {['Yamaha', 'Hikvision', 'Barrisol', 'Klipsch', 'Lutron', 'Epson'].map((b) => (
+              <div key={b} className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl px-3 py-4 text-center">
+                <p className="text-white text-sm font-bold">{b}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 

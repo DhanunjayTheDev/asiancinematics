@@ -50,16 +50,38 @@ const ContactPage = () => {
 
       <div className="min-h-screen bg-black">
         {/* Hero Section */}
-        <div className="bg-gradient-to-b from-blue-950/30 to-black py-20 border-b border-blue-500/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
-                <p className="text-sm font-semibold text-blue-400 flex items-center justify-center gap-2"><HiOutlinePhone className="w-4 h-4" /> GET IN TOUCH | PRAVARA WORLD TECH <HiOutlinePhone className="w-4 h-4" /></p>
+        <div className="relative border-b border-blue-500/20 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&auto=format&fit=crop&q=60"
+            alt="Contact Pravara World Tech"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/80" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
+                  <p className="text-sm font-semibold text-blue-400 flex items-center gap-2"><HiOutlinePhone className="w-4 h-4" /> GET IN TOUCH | PRAVARA WORLD TECH</p>
+                </div>
+                <h1 className="text-5xl lg:text-6xl font-bold text-white mb-4">We're Here to Help</h1>
+                <p className="text-xl text-gray-300 mt-4 max-w-xl">
+                  Have questions or need assistance? Our expert team is ready to support you with personalized solutions and expert guidance.
+                </p>
               </div>
-              <h1 className="text-5xl lg:text-6xl font-bold text-white mb-4">We're Here to Help</h1>
-              <p className="text-xl text-gray-300 mt-4 max-w-3xl mx-auto">
-                Have questions or need assistance? Our expert team is ready to support you with personalized solutions and expert guidance.
-              </p>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <HiOutlinePhone className="w-6 h-6" />, label: 'Call Us', value: '+91 98496 97886', color: 'border-blue-500/30' },
+                  { icon: <HiOutlineMail className="w-6 h-6" />, label: 'Email Us', value: 'info@pravaraworldtech.com', color: 'border-purple-500/30' },
+                  { icon: <FaWhatsapp className="w-6 h-6" />, label: 'WhatsApp', value: 'Chat Instantly', color: 'border-green-500/30' },
+                  { icon: <HiOutlineLocationMarker className="w-6 h-6" />, label: 'Location', value: 'Hyderabad, India', color: 'border-yellow-500/30' },
+                ].map((item, i) => (
+                  <div key={i} className={`bg-black/50 backdrop-blur-sm border ${item.color} rounded-xl p-4`}>
+                    <div className="text-yellow-400 mb-2">{item.icon}</div>
+                    <p className="text-gray-400 text-xs mb-1">{item.label}</p>
+                    <p className="text-white text-sm font-semibold leading-tight">{item.value}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

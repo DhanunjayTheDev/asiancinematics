@@ -6,42 +6,42 @@ const works = [
   {
     title: 'Tensile Structures',
     desc: 'High-quality tensile fabric structures for carports, walkways, amphitheatres, and outdoor shading.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&auto=format&fit=crop&q=60',
     features: ['Custom Fabric Selection', 'Steel Framework', 'Weather Resistant', 'UV Protected'],
     badge: 'Most Popular',
   },
   {
     title: 'Parking Shades',
     desc: 'Durable and aesthetic tensile parking shades for residential complexes, malls, and corporate offices.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&auto=format&fit=crop&q=60',
     features: ['PVDF Fabric', 'Hot-dip Galvanized Steel', 'Wind Load Design', 'Multiple Colors'],
     badge: null,
   },
   {
     title: 'Architectural Facades',
     desc: 'Innovative tensile facade systems that redefine building aesthetics with structural functionality.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&auto=format&fit=crop&q=60',
     features: ['Landmark Designs', 'Structural Engineering', 'Facade Integration', 'Low Maintenance'],
     badge: null,
   },
   {
     title: 'Amphitheatre & Event Shades',
     desc: 'Large-span tensile canopy systems for outdoor events, amphitheatres, and community spaces.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=60',
     features: ['Large Span', 'Modular Design', 'Rapid Installation', 'Event Grade'],
     badge: 'New',
   },
   {
     title: 'Pool & Courtyard Covers',
     desc: 'Elegant tensile covers for swimming pools, courtyards, and garden spaces functional and beautiful.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&auto=format&fit=crop&q=60',
     features: ['Water Drainage Design', 'HDPE or PVDF', 'Custom Shape', 'Aesthetic Finish'],
     badge: null,
   },
   {
     title: 'Commercial Canopies',
     desc: 'Eye-catching branding canopies for entry areas, food courts, and commercial establishments.',
-    image: null,
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&auto=format&fit=crop&q=60',
     features: ['Brand Colors', 'Backlit Options', 'Structural Safety', 'PAN India Installation'],
     badge: null,
   },
@@ -63,14 +63,19 @@ const StructuralWorksPage = () => (
     </Helmet>
 
     {/* Hero */}
-    <section className="py-20 px-6 border-b border-yellow-500/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none" />
-      <div className="relative max-w-5xl mx-auto text-center">
+    <section className="relative min-h-[420px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&auto=format&fit=crop&q=60"
+        alt="Structural Works"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/75" />
+      <div className="relative max-w-5xl mx-auto px-6 py-20 text-center w-full">
         <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Engineering Excellence</span>
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Tensile & <span className="text-yellow-400">Structural Works</span>
         </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+        <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8">
           From carports to amphitheatres we design and install premium tensile structures across India with precision engineering and quality materials.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -90,22 +95,30 @@ const StructuralWorksPage = () => (
         <h2 className="text-3xl font-bold text-center mb-12">Our <span className="text-yellow-400">Structural Solutions</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {works.map((work) => (
-            <div key={work.title} className="bg-gray-900/50 border border-gray-700/50 rounded-2xl p-6 hover:border-yellow-500/50 transition-colors group">
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">{work.title}</h3>
+            <div key={work.title} className="bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-yellow-500/50 transition-all group">
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={work.image}
+                  alt={work.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 {work.badge && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-yellow-400 text-black rounded-full">{work.badge}</span>
+                  <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 bg-yellow-400 text-black rounded-full">{work.badge}</span>
                 )}
+                <h3 className="absolute bottom-3 left-4 text-lg font-bold text-white group-hover:text-yellow-400 transition-colors">{work.title}</h3>
               </div>
-              <p className="text-gray-400 text-sm mb-5 leading-relaxed">{work.desc}</p>
-              <ul className="space-y-2">
-                {work.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-gray-400">
-                    <FiCheckCircle className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+              <div className="p-6">
+                <p className="text-gray-400 text-sm mb-5 leading-relaxed">{work.desc}</p>
+                <ul className="space-y-2">
+                  {work.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-xs text-gray-400">
+                      <FiCheckCircle className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>

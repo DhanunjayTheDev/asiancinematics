@@ -99,26 +99,51 @@ const ServicesPage = () => {
 
       <div className="min-h-screen bg-black">
         {/* Hero Section */}
-        <div className="bg-gradient-to-b from-blue-950/30 to-black py-20 border-b border-blue-500/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <div className="inline-block bg-blue-500/20 border border-blue-500/40 px-4 py-2 rounded-full mb-6">
-                <p className="text-sm font-semibold text-blue-400">✨ WELCOME TO PRAVARA WORLD TECH ✨</p>
+        <section className="relative min-h-[420px] flex items-center border-b border-yellow-500/20 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1400&auto=format&fit=crop&q=60"
+            alt="Pravara World Tech Services"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/80" />
+          <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">✨ Welcome to Pravara World Tech</span>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">Where <span className="text-yellow-400">Vision</span> Meets Innovation</h1>
+                <p className="text-gray-300 text-lg max-w-xl mb-6">
+                  Premium lifestyle & smart technology solutions with 23+ years of expertise, serving 2500+ satisfied customers across India.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <div className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl px-4 py-2 text-center">
+                    <p className="text-xl font-bold text-yellow-400">23+</p>
+                    <p className="text-[11px] text-gray-400">Years</p>
+                  </div>
+                  <div className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl px-4 py-2 text-center">
+                    <p className="text-xl font-bold text-yellow-400">2500+</p>
+                    <p className="text-[11px] text-gray-400">Projects</p>
+                  </div>
+                  <div className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-xl px-4 py-2 text-center">
+                    <p className="text-xl font-bold text-yellow-400">50+</p>
+                    <p className="text-[11px] text-gray-400">Cities</p>
+                  </div>
+                </div>
               </div>
-              <h1 className="text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">Where Vision Meets Innovation</h1>
-              <p className="text-xl text-gray-300 mt-4 max-w-3xl mx-auto leading-relaxed">
-                Premium lifestyle & smart technology solutions with 23+ years of expertise, serving 2500+ satisfied customers across India.
-              </p>
-            </div>
-
-            {/* Founder Info */}
-            <div className="text-center py-8 border-t border-blue-500/20 mt-12">
-              <p className="text-gray-300 mb-2 flex items-center justify-center gap-2"><FiUsers className="w-5 h-5 text-yellow-400" /> <span className="font-semibold text-white">Founder & Visionary</span></p>
-              <p className="text-lg text-blue-400 font-semibold">Praveen Kumar Yougi A</p>
-              <p className="text-gray-400 text-sm mt-1">Asian Cinematics | Pravara World Tech | Ecop World International</p>
+              <div className="bg-black/50 backdrop-blur border border-yellow-500/20 rounded-2xl p-6">
+                <p className="text-xs text-yellow-400 font-semibold tracking-widest uppercase mb-3">Founder & Visionary</p>
+                <p className="text-2xl font-bold text-white mb-1">Praveen Kumar Yougi A</p>
+                <p className="text-gray-400 text-sm mb-4">Asian Cinematics · Pravara World Tech · Ecop World International</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Home Theatre', 'Smart Home', 'Security', 'Structural', 'Lighting', 'Decoratives'].map((s) => (
+                    <div key={s} className="flex items-center gap-2 text-xs text-gray-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />{s}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* What We Offer */}
         <div className="py-20 border-b border-blue-500/20">
@@ -133,118 +158,148 @@ const ServicesPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">🔐</div>
-                <h3 className="text-xl font-bold text-white mb-2">Security Systems</h3>
-                <p className="text-gray-400 mb-4">Advanced protection solutions built for total peace of mind.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• CCTV Surveillance Systems</li>
-                  <li>• Intrusion Alarm Systems</li>
-                  <li>• Solar Fencing Solutions</li>
-                  <li>• Remote Monitoring & Mobile Access</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">🛡️ Smart protection for homes, businesses, and large-scale properties.</p>
-                <button
-                  onClick={() => setShowSecurityModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Security Systems */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=600&auto=format&fit=crop&q=60" alt="Security Systems" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">🔐</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-blue-600/80 text-white rounded-full">Security</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Security Systems</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Advanced protection solutions built for total peace of mind.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />CCTV Surveillance Systems</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Intrusion Alarm Systems</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Solar Fencing Solutions</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Remote Monitoring & Mobile Access</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">🛡️ Smart protection for homes, businesses, and large-scale properties.</p>
+                  <button onClick={() => setShowSecurityModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">🏡</div>
-                <h3 className="text-xl font-bold text-white mb-2">Smart Home Automation</h3>
-                <p className="text-gray-400 mb-4">Control your space with intelligence and ease.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• Smart Lighting & Scene Control</li>
-                  <li>• Curtain & Blind Automation</li>
-                  <li>• Smart Gate & Door Access</li>
-                  <li>• Centralized App-Based Control</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">⚡ Convenience, efficiency, and futuristic living all in one system.</p>
-                <button
-                  onClick={() => setShowSmartHomeModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-black text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Smart Home Automation */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&auto=format&fit=crop&q=60" alt="Smart Home" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">🏡</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-cyan-600/80 text-white rounded-full">Automation</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Smart Home Automation</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Control your space with intelligence and ease.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Smart Lighting & Scene Control</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Curtain & Blind Automation</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Smart Gate & Door Access</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Centralized App-Based Control</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">⚡ Convenience, efficiency, and futuristic living all in one system.</p>
+                  <button onClick={() => setShowSmartHomeModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-black text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">🎬</div>
-                <h3 className="text-xl font-bold text-white mb-2">Home Theater & Audio Solutions</h3>
-                <p className="text-gray-400 mb-4">Bring cinematic excellence into your home.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• Customized Home Theatre Rooms</li>
-                  <li>• Living Room Cinema Setups</li>
-                  <li>• Dolby Atmos & Surround Sound Systems</li>
-                  <li>• Acoustic Treatment & Soundproofing</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">🎧 Engineered for immersive audio-visual experiences.</p>
-                <button
-                  onClick={() => setShowHomeTheaterModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-black text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Home Theater */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=60" alt="Home Theater" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">🎬</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-orange-600/80 text-white rounded-full">Cinema</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Home Theater & Audio Solutions</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Bring cinematic excellence into your home.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Customized Home Theatre Rooms</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Living Room Cinema Setups</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Dolby Atmos & Surround Sound Systems</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Acoustic Treatment & Soundproofing</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">🎧 Engineered for immersive audio-visual experiences.</p>
+                  <button onClick={() => setShowHomeTheaterModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-black text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">🎨</div>
-                <h3 className="text-xl font-bold text-white mb-2">Interior & Decorative Designs</h3>
-                <p className="text-gray-400 mb-4">Where aesthetics meet innovation.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• Stretch Ceilings</li>
-                  <li>• Galaxy Star Lighting Designs</li>
-                  <li>• Premium Wall & Ceiling Finishes</li>
-                  <li>• Customized Decorative Concepts</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">✨ Transform ordinary spaces into extraordinary environments.</p>
-                <button
-                  onClick={() => setShowInteriorModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Interior & Decorative */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=60" alt="Interior Design" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">🎨</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-purple-600/80 text-white rounded-full">Interior</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Interior & Decorative Designs</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Where aesthetics meet innovation.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Stretch Ceilings</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Galaxy Star Lighting Designs</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Premium Wall & Ceiling Finishes</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Customized Decorative Concepts</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">✨ Transform ordinary spaces into extraordinary environments.</p>
+                  <button onClick={() => setShowInteriorModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">💡</div>
-                <h3 className="text-xl font-bold text-white mb-2">Lighting Solutions</h3>
-                <p className="text-gray-400 mb-4">Perfect lighting for every mood and purpose.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• Smart Lighting Systems</li>
-                  <li>• Architectural & Ambient Lighting</li>
-                  <li>• Decorative Lighting Installations</li>
-                  <li>• Energy-Efficient Solutions</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">💫 Enhancing atmosphere through intelligent illumination.</p>
-                <button
-                  onClick={() => setShowLightingModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Lighting Solutions */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&auto=format&fit=crop&q=60" alt="Lighting Solutions" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">💡</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-yellow-500/80 text-black rounded-full">Lighting</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Lighting Solutions</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Perfect lighting for every mood and purpose.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Smart Lighting Systems</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Architectural & Ambient Lighting</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Decorative Lighting Installations</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Energy-Efficient Solutions</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">💫 Enhancing atmosphere through intelligent illumination.</p>
+                  <button onClick={() => setShowLightingModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl p-8 hover:border-blue-500/50 transition-all flex flex-col">
-                <div className="text-3xl mb-4">🏗</div>
-                <h3 className="text-xl font-bold text-white mb-2">Structural Works</h3>
-                <p className="text-gray-400 mb-4">Strong, stylish, and built to last.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                  <li>• Pergolas & Outdoor Structures</li>
-                  <li>• Car Parking Sheds</li>
-                  <li>• Tensile Fabric Canopies</li>
-                  <li>• Custom Fabrication Works</li>
-                </ul>
-                <p className="text-yellow-400 text-sm font-semibold mb-5">🏗️ Durability meets modern architectural design.</p>
-                <button
-                  onClick={() => setShowStructuralModal(true)}
-                  className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold rounded-lg transition"
-                >
-                  <FiZap className="w-4 h-4" /> Service Request
-                </button>
+              {/* Structural Works */}
+              <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col">
+                <div className="relative h-44 overflow-hidden flex-shrink-0">
+                  <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&auto=format&fit=crop&q=60" alt="Structural Works" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <span className="absolute bottom-3 left-4 text-2xl">🏗</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-amber-600/80 text-black rounded-full">Structural</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">Structural Works</h3>
+                  <p className="text-gray-400 mb-4 text-sm">Strong, stylish, and built to last.</p>
+                  <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Pergolas & Outdoor Structures</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Car Parking Sheds</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Tensile Fabric Canopies</li>
+                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Custom Fabrication Works</li>
+                  </ul>
+                  <p className="text-yellow-400 text-xs font-semibold mb-5">🏗️ Durability meets modern architectural design.</p>
+                  <button onClick={() => setShowStructuralModal(true)} className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold rounded-lg transition">
+                    <FiZap className="w-4 h-4" /> Service Request
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -256,29 +311,41 @@ const ServicesPage = () => {
                 <p className="text-gray-400 max-w-2xl mx-auto mt-4">We go beyond execution providing complete design, technical engineering, and digital growth solutions for both residential and commercial projects.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
-                  <div className="text-3xl mb-4">🏗️</div>
-                  <h4 className="text-lg font-semibold text-yellow-400 mb-3">📐 Design Drawings & Planning</h4>
-                  <p className="text-gray-400 text-sm mb-4">Precision-driven planning for perfect execution.</p>
-                  <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                    <li>• 2D Layout Drawings (Home Theatre, Security, Automation)</li>
-                    <li>• Electrical & Wiring Schematics</li>
-                    <li>• Structural & Installation Planning</li>
-                    <li>• Custom Room Design Concepts</li>
-                  </ul>
-                  <p className="text-blue-400 text-sm font-semibold">📊 Plan smart. Execute perfectly.</p>
+                <div className="group bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all">
+                  <div className="relative h-40 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=700&auto=format&fit=crop&q=60" alt="Design & Planning" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-xl">📐</span>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-lg font-semibold text-yellow-400 mb-3">Design Drawings & Planning</h4>
+                    <p className="text-gray-400 text-sm mb-4">Precision-driven planning for perfect execution.</p>
+                    <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />2D Layout Drawings (Home Theatre, Security, Automation)</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Electrical & Wiring Schematics</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Structural & Installation Planning</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Custom Room Design Concepts</li>
+                    </ul>
+                    <p className="text-blue-400 text-sm font-semibold">📊 Plan smart. Execute perfectly.</p>
+                  </div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl p-8 hover:border-purple-500/50 transition-all">
-                  <div className="text-3xl mb-4">🖥️</div>
-                  <h4 className="text-lg font-semibold text-yellow-400 mb-3">✨ 3D Rendering & Visualization</h4>
-                  <p className="text-gray-400 text-sm mb-4">Experience your project before execution.</p>
-                  <ul className="text-sm text-gray-300 space-y-2 mb-4">
-                    <li>• Photorealistic 3D Interior Renders</li>
-                    <li>• Home Theatre Visualization</li>
-                    <li>• Lighting & Acoustic Simulation</li>
-                    <li>• Client Presentation Designs</li>
-                  </ul>
-                  <p className="text-blue-400 text-sm font-semibold">✨ See it. Feel it. Approve it before execution.</p>
+                <div className="group bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all">
+                  <div className="relative h-40 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1616596969059-de6b7a5af37f?w=700&auto=format&fit=crop&q=60" alt="3D Rendering" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-xl">🖥️</span>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-lg font-semibold text-yellow-400 mb-3">3D Rendering & Visualization</h4>
+                    <p className="text-gray-400 text-sm mb-4">Experience your project before execution.</p>
+                    <ul className="text-sm text-gray-300 space-y-2 mb-4">
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Photorealistic 3D Interior Renders</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Home Theatre Visualization</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Lighting & Acoustic Simulation</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Client Presentation Designs</li>
+                    </ul>
+                    <p className="text-blue-400 text-sm font-semibold">✨ See it. Feel it. Approve it before execution.</p>
+                  </div>
                 </div>
               </div>
             </div>
