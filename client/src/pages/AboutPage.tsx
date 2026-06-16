@@ -59,7 +59,7 @@ const AboutPage = () => (
               <span className="text-white font-semibold">Asian Cinematics | Pravara World Tech | Ecop World International</span>
             </p>
             <p className="text-gray-400 text-base max-w-xl">
-              Where Vision Meets Innovation — We specialize in premium lifestyle & smart technology solutions for modern homes and businesses across India, with 23+ years of excellence.
+              Where Vision Meets Innovation We specialize in premium lifestyle & smart technology solutions for modern homes and businesses across India, with 23+ years of excellence.
             </p>
             <div className="flex flex-wrap gap-4 mt-8">
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-2">
@@ -85,7 +85,7 @@ const AboutPage = () => (
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-white font-semibold text-sm">Pravara World Tech — Hyderabad</p>
+                <p className="text-white font-semibold text-sm">Pravara World Tech Hyderabad</p>
                 <p className="text-gray-300 text-xs">Smart Technology Solutions Since 2003</p>
               </div>
             </div>

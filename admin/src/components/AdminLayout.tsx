@@ -55,6 +55,7 @@ const NAV_SECTIONS = [
       { to: '/site-visits', label: 'Site Visits', icon: HiOutlineCalendar, roles: ['super_admin', 'support', 'employee'] },
       { to: '/inquiries', label: 'Inquiries', icon: HiOutlineMail, roles: ['super_admin', 'support'] },
       { to: '/service-requests', label: 'Service Requests', icon: HiOutlineTicket, roles: ['super_admin', 'support'] },
+      { to: '/registrations', label: 'Registrations', icon: HiOutlineUserGroup, roles: ['super_admin'] },
       { to: '/forums', label: 'Forums', icon: HiOutlineChatAlt2, roles: ['super_admin', 'support'] },
       { to: '/users', label: 'Users', icon: HiOutlineUsers, roles: ['super_admin'] },
     ],

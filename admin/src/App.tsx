@@ -19,6 +19,7 @@ import ServiceRequestsPage from './pages/ServiceRequestsPage';
 import ForumsPage from './pages/ForumsPage';
 import UsersPage from './pages/UsersPage';
 import ReportsPage from './pages/ReportsPage';
+import RegistrationsPage from './pages/RegistrationsPage';
 
 const App = () => {
   const { isAuthenticated, fetchProfile } = useAuthStore();
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/site-visits" element={<SiteVisitsPage />} />
           <Route path="/inquiries" element={<InquiriesPage />} />
           <Route path="/service-requests" element={<ServiceRequestsPage />} />
+          <Route path="/registrations" element={<RegistrationsPage />} />
           <Route path="/forums" element={<ForumsPage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/reports" element={<ReportsPage />} />

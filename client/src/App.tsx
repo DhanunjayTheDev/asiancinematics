@@ -30,12 +30,21 @@ import BrandsPage from './pages/BrandsPage';
 import PartnerNetworkPage from './pages/PartnerNetworkPage';
 import ForumsPage from './pages/ForumsPage';
 import AboutPage from './pages/AboutPage';
+import JoinWithUsPage from './pages/JoinWithUsPage';
+import NotFoundPage from './pages/NotFoundPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import DisclaimerPage from './pages/DisclaimerPage';
+
+const AUTH_ROUTES = ['/login', '/register', '/join'];
 
 const App = () => {
   const location = useLocation();
   const { isAuthenticated } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [hasShownModal, setHasShownModal] = useState(false);
+
+  const isAuthPage = AUTH_ROUTES.some(r => location.pathname === r || location.pathname.startsWith(r + '/'));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -58,7 +67,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-black">
-      <Navbar />
+      {!isAuthPage && <Navbar />}
       <main className="flex-1">
         <Routes>
           {/* Public */}
@@ -78,6 +87,11 @@ const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/join/:role" element={<JoinWithUsPage />} />
+          <Route path="/join" element={<JoinWithUsPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
 
           {/* Auth required */}
           <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
@@ -89,19 +103,11 @@ const App = () => {
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
           {/* 404 */}
-          <Route path="*" element={
-            <div className="min-h-[60vh] flex items-center justify-center text-center">
-              <div>
-                <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
-                <p className="text-gray-600 mb-4">Page not found</p>
-                <Link to="/" className="btn-primary">Go Home</Link>
-              </div>
-            </div>
-          } />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
-      <WhatsAppButton />
+      {!isAuthPage && <Footer />}
+      {!isAuthPage && <WhatsAppButton />}
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );

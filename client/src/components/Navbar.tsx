@@ -5,10 +5,18 @@ import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import logo from '../assets/pravaraworldmainlogo.png';
 
+const joinSubLinks = [
+  { to: '/join/partner', label: '🤝 Partner Registration', desc: 'Dealer / Distributor / Channel' },
+  { to: '/join/freelancer', label: '💼 Freelancer Registration', desc: 'Independent Technician / Installer' },
+  { to: '/join/employee', label: '👤 Employee Registration', desc: 'Full-Time / Part-Time Position' },
+];
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
+  const [joinOpen, setJoinOpen] = useState(false);
   const solutionsRef = useRef<HTMLDivElement>(null);
+  const joinRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user } = useAuthStore();
   const items = useCartStore((s) => s.items);
   const cartCount = items.length;
@@ -17,6 +25,9 @@ const Navbar = () => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (solutionsRef.current && !solutionsRef.current.contains(e.target as Node)) {
         setSolutionsOpen(false);
+      }
+      if (joinRef.current && !joinRef.current.contains(e.target as Node)) {
+        setJoinOpen(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideClick);
@@ -121,6 +132,49 @@ const Navbar = () => {
                 </NavLink>
               </li>
             ))}
+
+            {/* Join With Us dropdown */}
+            <li ref={joinRef} className="relative">
+              <button
+                onClick={() => setJoinOpen(o => !o)}
+                className={`flex items-center gap-1 px-3 py-3 text-[11px] font-semibold tracking-wider whitespace-nowrap transition-colors duration-200 border-b-2 ${
+                  joinOpen ? 'text-yellow-400 border-yellow-400' : 'text-gray-300 border-transparent hover:text-yellow-400 hover:border-yellow-400/50'
+                }`}
+              >
+                JOIN WITH US <FiChevronDown className={`w-3 h-3 transition-transform ${joinOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {joinOpen && (
+                <div className="absolute top-full left-0 mt-0 w-64 bg-black border border-yellow-500/20 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  {joinSubLinks.map((sub) => (
+                    <Link
+                      key={sub.to}
+                      to={sub.to}
+                      onClick={() => setJoinOpen(false)}
+                      className="flex flex-col px-4 py-3 hover:bg-yellow-400/5 transition-colors border-b border-gray-800 last:border-0"
+                    >
+                      <span className="text-xs font-bold text-white">{sub.label}</span>
+                      <span className="text-[10px] text-gray-500 mt-0.5">{sub.desc}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </li>
+
+            {/* Login link */}
+            {!isAuthenticated && (
+              <li>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    `block px-3 py-3 text-[11px] font-semibold tracking-wider whitespace-nowrap transition-colors duration-200 border-b-2 ${
+                      isActive ? 'text-yellow-400 border-yellow-400' : 'text-gray-300 border-transparent hover:text-yellow-400 hover:border-yellow-400/50'
+                    }`
+                  }
+                >
+                  LOGIN
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
@@ -144,6 +198,33 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
+
+            {/* Mobile Join With Us */}
+            <div className="py-2 border-b border-gray-800">
+              <p className="text-[10px] font-bold text-yellow-400 tracking-widest uppercase mb-2">Join With Us</p>
+              {joinSubLinks.map((sub) => (
+                <Link
+                  key={sub.to}
+                  to={sub.to}
+                  onClick={() => setIsOpen(false)}
+                  className="block py-2 text-xs text-gray-300 hover:text-yellow-400 transition-colors pl-2"
+                >
+                  {sub.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile Login link */}
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="py-2.5 text-xs font-semibold tracking-wider text-gray-300 hover:text-yellow-400 transition-colors border-b border-gray-800"
+              >
+                LOGIN
+              </Link>
+            )}
+
             <div className="mt-4 pt-3 border-t border-yellow-500/20">
               {isAuthenticated && user ? (
                 <Link

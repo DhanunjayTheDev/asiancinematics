@@ -255,13 +255,13 @@ const Footer = () => (
           reserved.
         </p>
         <div className="flex items-center gap-6">
-          <Link to="/" className="hover:text-yellow-400 transition-colors">
+          <Link to="/privacy" className="hover:text-yellow-400 transition-colors">
             Privacy Policy
           </Link>
-          <Link to="/" className="hover:text-yellow-400 transition-colors">
+          <Link to="/terms" className="hover:text-yellow-400 transition-colors">
             Terms & Conditions
           </Link>
-          <Link to="/" className="hover:text-yellow-400 transition-colors">
+          <Link to="/disclaimer" className="hover:text-yellow-400 transition-colors">
             Disclaimer
           </Link>
         </div>

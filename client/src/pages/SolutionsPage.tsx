@@ -107,7 +107,7 @@ const SolutionsPage = () => (
               Our <span className="text-yellow-400">Solutions</span>
             </h1>
             <p className="text-gray-300 text-lg max-w-xl">
-              Where Vision Meets Innovation — premium lifestyle & smart technology solutions for modern homes and businesses.
+              Where Vision Meets Innovation premium lifestyle & smart technology solutions for modern homes and businesses.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">

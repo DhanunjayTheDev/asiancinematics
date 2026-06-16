@@ -30,10 +30,18 @@ const ServiceRequestsPage = () => {
   const [selected, setSelected] = useState<any>(null);
   const [newStatus, setNewStatus] = useState('');
   const [newPaymentStatus, setNewPaymentStatus] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [showScreenshot, setShowScreenshot] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [staffList, setStaffList] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.get('/registrations/staff')
+      .then(({ data }) => setStaffList(data.data || []))
+      .catch(() => {});
+  }, []);
 
   const fetchRequests = () => {
     setLoading(true);
@@ -56,6 +64,7 @@ const ServiceRequestsPage = () => {
     setSelected(req);
     setNewStatus(req.status);
     setNewPaymentStatus(req.paymentStatus || 'pending');
+    setAssignedTo(req.assignedTo?._id || req.assignedTo || '');
     setShowScreenshot(false);
     setShowModal(true);
   };
@@ -67,6 +76,7 @@ const ServiceRequestsPage = () => {
       await api.put(`/service-requests/${selected._id}/status`, {
         status: newStatus,
         paymentStatus: newPaymentStatus,
+        ...(assignedTo ? { assignedTo } : {}),
       });
       toast.success('Updated successfully');
       setShowModal(false);
@@ -119,6 +129,7 @@ const ServiceRequestsPage = () => {
                 <th className="px-4 py-3 text-left font-semibold text-gray-300">Amount</th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-300">Payment</th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-300">Status</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-300">Assigned</th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-300">Date</th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-300">Action</th>
               </tr>
@@ -161,6 +172,7 @@ const ServiceRequestsPage = () => {
                           {ss.label}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-gray-300 text-xs">{r.assignedTo?.name || <span className="text-gray-600">—</span>}</td>
                       <td className="px-4 py-3 text-gray-400 text-xs">{new Date(r.createdAt).toLocaleDateString()}</td>
                       <td className="px-4 py-3">
                         <button onClick={() => openModal(r)} className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm font-medium">
@@ -175,10 +187,10 @@ const ServiceRequestsPage = () => {
           </table>
         </div>
 
-        <Pagination current={page} total={totalPages} onChange={setPage} />
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
-      {/* Detail Modal — rendered outside space-y-6 so fixed inset-0 covers full viewport */}
+      {/* Detail Modal rendered outside space-y-6 so fixed inset-0 covers full viewport */}
       {showModal && selected && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur z-50 flex items-center justify-center p-4">
             <div className="bg-gray-900 border border-gray-700 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -209,9 +221,9 @@ const ServiceRequestsPage = () => {
                     </div>
                   )}
                   {selected.systemType && <div><p className="text-gray-400 text-xs">System Type</p><p className="text-white">{selected.systemType}</p></div>}
-                  {selected.serviceRequestType && <div><p className="text-gray-400 text-xs">Service Type</p><p className="text-white">{selected.serviceRequestType} — ₹{selected.serviceAmount}</p></div>}
+                  {selected.serviceRequestType && <div><p className="text-gray-400 text-xs">Service Type</p><p className="text-white">{selected.serviceRequestType} ₹{selected.serviceAmount}</p></div>}
                   {selected.startDate && <div><p className="text-gray-400 text-xs">Start Date</p><p className="text-white">{new Date(selected.startDate).toLocaleDateString()}</p></div>}
-                  {selected.needsDiscussion && <div><p className="text-gray-400 text-xs">Discussion</p><p className="text-yellow-400 font-medium">Yes — Team discussion needed</p></div>}
+                  {selected.needsDiscussion && <div><p className="text-gray-400 text-xs">Discussion</p><p className="text-yellow-400 font-medium">Yes Team discussion needed</p></div>}
                   {selected.specs && <div className="col-span-2"><p className="text-gray-400 text-xs">Specifications</p><p className="text-white">{selected.specs}</p></div>}
                 </div>
 
@@ -267,6 +279,26 @@ const ServiceRequestsPage = () => {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Assign To */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Assign To Staff</label>
+                  <select
+                    value={assignedTo}
+                    onChange={e => setAssignedTo(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="">Unassigned —</option>
+                    {staffList.map(s => (
+                      <option key={s._id} value={s._id}>{s.name} ({s.role})</option>
+                    ))}
+                  </select>
+                  {selected.assignedTo && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Currently: {selected.assignedTo?.name || 'Assigned'}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex gap-3">

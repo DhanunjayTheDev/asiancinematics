@@ -170,7 +170,7 @@ const ProductsPage = () => {
                 <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">✨ Premium Products · Pravara World Tech</span>
                 <h1 className="text-4xl md:text-6xl font-bold mb-4">Explore <span className="text-yellow-400">Premium Products</span></h1>
                 <p className="text-gray-300 text-lg max-w-xl">
-                  Discover our extensive range of cinema, smart home, and security products — genuine, certified, and backed by full warranties.
+                  Discover our extensive range of cinema, smart home, and security products genuine, certified, and backed by full warranties.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
