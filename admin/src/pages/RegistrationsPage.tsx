@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { FiCheck, FiX, FiEye, FiUser, FiBriefcase, FiUsers } from 'react-icons/fi';
+import { FiCheck, FiX, FiEye, FiUser, FiBriefcase, FiUsers, FiPlus, FiEyeOff } from 'react-icons/fi';
 import api from '../lib/api';
 import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
@@ -32,6 +32,27 @@ const RegistrationsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [updating, setUpdating] = useState(false);
+
+  // Create staff directly
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({ name: '', email: '', phone: '', password: '', role: 'employee' as 'employee' | 'freelancer' });
+  const [showCreatePwd, setShowCreatePwd] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  const handleCreateStaff = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      await api.post('/auth/users', createForm);
+      toast.success(`${createForm.role === 'employee' ? 'Employee' : 'Freelancer'} account created`);
+      setShowCreateModal(false);
+      setCreateForm({ name: '', email: '', phone: '', password: '', role: 'employee' });
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to create account');
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const fetchRegs = () => {
     setLoading(true);
@@ -83,9 +104,17 @@ const RegistrationsPage = () => {
       <Helmet><title>Registrations | Admin</title></Helmet>
 
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Registrations</h1>
-          <p className="text-sm text-gray-400 mt-1">Partner, Freelancer & Employee applications</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Registrations</h1>
+            <p className="text-sm text-gray-400 mt-1">Partner, Freelancer & Employee applications</p>
+          </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition flex-shrink-0"
+          >
+            <FiPlus className="w-4 h-4" /> Create Staff
+          </button>
         </div>
 
         {/* Filters */}
@@ -169,6 +198,98 @@ const RegistrationsPage = () => {
 
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
+
+      {/* Create Staff Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-xl w-full max-w-md">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-700">
+              <div>
+                <h2 className="text-lg font-bold text-white">Create Staff Account</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Directly create an employee or freelancer login</p>
+              </div>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-white"><FiX className="w-5 h-5" /></button>
+            </div>
+            <form onSubmit={handleCreateStaff} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5">Role</label>
+                <div className="flex gap-3">
+                  {(['employee', 'freelancer'] as const).map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setCreateForm(f => ({ ...f, role: r }))}
+                      className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize border transition ${createForm.role === r ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-800 border-gray-600 text-gray-300 hover:border-gray-400'}`}
+                    >
+                      {r === 'employee' ? '👤 Employee' : '💼 Freelancer'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5">Full Name *</label>
+                <input
+                  required
+                  value={createForm.name}
+                  onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Full name"
+                  className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email *</label>
+                <input
+                  required
+                  type="email"
+                  value={createForm.email}
+                  onChange={e => setCreateForm(f => ({ ...f, email: e.target.value }))}
+                  placeholder="email@example.com"
+                  className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5">Phone *</label>
+                <input
+                  required
+                  type="tel"
+                  value={createForm.phone}
+                  onChange={e => setCreateForm(f => ({ ...f, phone: e.target.value }))}
+                  placeholder="10-digit mobile number"
+                  className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5">Password *</label>
+                <div className="relative">
+                  <input
+                    required
+                    type={showCreatePwd ? 'text' : 'password'}
+                    value={createForm.password}
+                    onChange={e => setCreateForm(f => ({ ...f, password: e.target.value }))}
+                    placeholder="Min. 8 characters"
+                    minLength={8}
+                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500 pr-10"
+                  />
+                  <button type="button" onClick={() => setShowCreatePwd(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200">
+                    {showCreatePwd ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowCreateModal(false)}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">
+                  Cancel
+                </button>
+                <button type="submit" disabled={creating}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50">
+                  {creating ? 'Creating...' : 'Create Account'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal */}
       {showModal && selected && (
@@ -272,7 +393,7 @@ const RegistrationsPage = () => {
                       <FiCheck className="w-4 h-4" /> {updating ? 'Processing...' : 'Approve'}
                     </button>
                   </div>
-                  <p className="text-[10px] text-gray-500 text-center">Approving creates a user account with the appropriate role.</p>
+                  <p className="text-[10px] text-gray-500 text-center">Approving creates a user account. The applicant can log in with the email + password they set during registration.</p>
                 </div>
               )}
             </div>

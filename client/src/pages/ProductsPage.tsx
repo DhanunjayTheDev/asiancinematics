@@ -13,12 +13,24 @@ import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
 import CustomSelect from '../components/CustomSelect';
 
+type DealType = 'special_offer' | 'today_deal' | 'clearance_sale' | 'festival_offer' | 'combo_package' | 'refurbished';
+
+const DEAL_TYPE_META: Record<DealType, { label: string; icon: string; color: string; activeColor: string }> = {
+  special_offer: { label: 'Special Offers', icon: '⭐', color: 'text-yellow-400 hover:bg-yellow-400/10', activeColor: 'bg-yellow-400/20 text-yellow-300 border-yellow-400/40' },
+  today_deal: { label: "Today's Deals", icon: '🔥', color: 'text-red-400 hover:bg-red-400/10', activeColor: 'bg-red-400/20 text-red-300 border-red-400/40' },
+  clearance_sale: { label: 'Clearance Sale', icon: '🏷️', color: 'text-orange-400 hover:bg-orange-400/10', activeColor: 'bg-orange-400/20 text-orange-300 border-orange-400/40' },
+  festival_offer: { label: 'Festival Offers', icon: '🎉', color: 'text-purple-400 hover:bg-purple-400/10', activeColor: 'bg-purple-400/20 text-purple-300 border-purple-400/40' },
+  combo_package: { label: 'Combo Packages', icon: '📦', color: 'text-blue-400 hover:bg-blue-400/10', activeColor: 'bg-blue-400/20 text-blue-300 border-blue-400/40' },
+  refurbished: { label: 'Refurbished', icon: '♻️', color: 'text-green-400 hover:bg-green-400/10', activeColor: 'bg-green-400/20 text-green-300 border-green-400/40' },
+};
+
 gsap.registerPlugin(ScrollTrigger);
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [deals, setDeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState(searchParams.get('search') || '');
@@ -28,6 +40,7 @@ const ProductsPage = () => {
   const page = parseInt(searchParams.get('page') || '1');
   const category = searchParams.get('category') || '';
   const sort = searchParams.get('sort') || '';
+  const dealType = searchParams.get('dealType') || '';
   const limit = 12;
 
   useEffect(() => {
@@ -63,6 +76,10 @@ const ProductsPage = () => {
   }, []);
 
   useEffect(() => {
+    api.get('/deals').then(({ data }) => setDeals(data.data || [])).catch(() => {});
+  }, []);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
@@ -72,6 +89,7 @@ const ProductsPage = () => {
         if (category) params.set('category', category);
         if (search) params.set('search', search);
         if (sort) params.set('sort', sort);
+        if (dealType) params.set('dealType', dealType);
 
         const cacheKey = `products_page_${params.toString()}`;
         const cacheTTL = 5 * 60 * 1000;
@@ -103,7 +121,7 @@ const ProductsPage = () => {
       }
     };
     fetchProducts();
-  }, [page, category, sort, search]);
+  }, [page, category, sort, search, dealType]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -249,13 +267,58 @@ const ProductsPage = () => {
             <div className="flex gap-8">
               <aside className={`${showFilters ? 'block' : 'hidden'} md:block w-full md:w-56 shrink-0`}>
                 <div className="bg-black border border-blue-500/20 rounded-lg p-6 space-y-6">
+                  {/* Special Deals */}
+                  {deals.length > 0 && (() => {
+                    const activeTypes = (Object.keys(DEAL_TYPE_META) as DealType[]).filter(t => deals.some(d => d.type === t));
+                    return activeTypes.length > 0 ? (
+                      <div>
+                        <h3 className="font-semibold text-white text-sm mb-3">Special Deals</h3>
+                        <ul className="space-y-1.5">
+                          <li>
+                            <button
+                              onClick={() => updateFilter('dealType', '')}
+                              className={`text-sm w-full text-left py-2 px-3 rounded-lg transition-colors ${!dealType ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-blue-500/10'}`}
+                            >
+                              All Products
+                            </button>
+                          </li>
+                          {activeTypes.map((type) => {
+                            const meta = DEAL_TYPE_META[type];
+                            const isActive = dealType === type;
+                            return (
+                              <li key={type}>
+                                <button
+                                  onClick={() => {
+                                    const params = new URLSearchParams(searchParams);
+                                    params.delete('category');
+                                    if (dealType === type) {
+                                      params.delete('dealType');
+                                    } else {
+                                      params.set('dealType', type);
+                                    }
+                                    params.set('page', '1');
+                                    setSearchParams(params);
+                                  }}
+                                  className={`text-xs w-full text-left py-2 px-3 rounded-lg border transition-all font-medium ${isActive ? meta.activeColor : `border-transparent ${meta.color}`}`}
+                                >
+                                  {meta.icon} {meta.label}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                        <div className="border-t border-blue-500/10 mt-4" />
+                      </div>
+                    ) : null;
+                  })()}
+
                   <div>
                     <h3 className="font-semibold text-white text-sm mb-4">Categories</h3>
                     <ul className="space-y-2">
                       <li>
                         <button
                           onClick={() => updateFilter('category', '')}
-                          className={`text-sm w-full text-left py-2 px-3 rounded-lg transition-colors ${!category ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-blue-500/10'}`}
+                          className={`text-sm w-full text-left py-2 px-3 rounded-lg transition-colors ${!category && !dealType ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-blue-500/10'}`}
                         >
                           All
                         </button>

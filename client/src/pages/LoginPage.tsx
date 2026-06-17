@@ -2,16 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
-import { FiEye, FiEyeOff, FiMail, FiLock, FiArrowRight, FiUsers, FiUser, FiHome } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiArrowRight, FiHome } from 'react-icons/fi';
 import { useAuthStore } from '../store/authStore';
 
 const isSafeRedirect = (url: string): url is string => {
   if (!url) return false;
-  if (url.startsWith('/')) return true;
-  return false;
+  return url.startsWith('/');
 };
-
-type LoginMode = 'customer' | 'staff';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -20,7 +17,6 @@ const LoginPage = () => {
   const redirect = (redirectParam && isSafeRedirect(redirectParam)) ? redirectParam : '/';
   const { login } = useAuthStore();
 
-  const [mode, setMode] = useState<LoginMode>('customer');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +30,8 @@ const LoginPage = () => {
       toast.success('Welcome back!');
       navigate(redirect);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Invalid credentials');
+      const msg = err.message || err.response?.data?.message || 'Invalid credentials';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -58,7 +55,6 @@ const LoginPage = () => {
           />
           <div className="absolute inset-0 bg-black/85" />
 
-          {/* Logo */}
           <div className="relative">
             <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
@@ -71,7 +67,6 @@ const LoginPage = () => {
             </Link>
           </div>
 
-          {/* Middle content */}
           <div className="relative">
             <span className="text-xs font-semibold text-yellow-400 tracking-widest uppercase mb-4 block">Welcome Back</span>
             <h2 className="text-4xl font-bold text-white mb-4 leading-snug">
@@ -95,7 +90,6 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="relative text-[11px] text-gray-500">
             © 2025 Pravara World Tech. All rights reserved.
           </div>
@@ -124,59 +118,14 @@ const LoginPage = () => {
               </Link>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-8">
               <h1 className="text-3xl font-bold text-white mb-1">Sign In</h1>
-              <p className="text-gray-400 text-sm">Choose your account type below</p>
+              <p className="text-gray-400 text-sm">Enter your customer account credentials</p>
             </div>
-
-            {/* Mode Tabs */}
-            <div className="flex gap-2 mb-7 p-1 bg-gray-900 border border-gray-800 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setMode('customer')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                  mode === 'customer'
-                    ? 'bg-yellow-400 text-black shadow'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <FiUser className="w-4 h-4" />
-                Customer
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('staff')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                  mode === 'staff'
-                    ? 'bg-yellow-400 text-black shadow'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <FiUsers className="w-4 h-4" />
-                Staff / Partner
-              </button>
-            </div>
-
-            {/* Context hint */}
-            {mode === 'customer' ? (
-              <div className="mb-5 px-4 py-3 bg-yellow-400/5 border border-yellow-400/20 rounded-xl text-xs text-gray-400 leading-relaxed">
-                <span className="text-yellow-400 font-semibold">Customer account</span> track orders, book visits, raise service requests.
-              </div>
-            ) : (
-              <div className="mb-5 px-4 py-3 bg-blue-500/5 border border-blue-500/20 rounded-xl text-xs text-gray-400 leading-relaxed">
-                <span className="text-blue-400 font-semibold">Staff / Partner account</span> for approved employees, freelancers & channel partners.{' '}
-                <Link to="/join/employee" className="text-yellow-400 hover:text-yellow-300 font-semibold underline underline-offset-2">
-                  Apply to join →
-                </Link>
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email */}
               <div>
-                <label className="block text-xs font-semibold text-gray-400 mb-1.5 tracking-wide uppercase">
-                  Email Address
-                </label>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5 tracking-wide uppercase">Email Address</label>
                 <div className="relative">
                   <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                   <input
@@ -191,11 +140,8 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Password */}
               <div>
-                <label className="block text-xs font-semibold text-gray-400 mb-1.5 tracking-wide uppercase">
-                  Password
-                </label>
+                <label className="block text-xs font-semibold text-gray-400 mb-1.5 tracking-wide uppercase">Password</label>
                 <div className="relative">
                   <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                   <input
@@ -212,7 +158,6 @@ const LoginPage = () => {
                     type="button"
                     onClick={() => setShowPassword(v => !v)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-yellow-400 transition-colors"
-                    aria-label="Toggle password visibility"
                   >
                     {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
                   </button>
@@ -229,42 +174,23 @@ const LoginPage = () => {
             </form>
 
             <div className="mt-6 pt-6 border-t border-gray-800 space-y-3 text-center">
-              {mode === 'customer' ? (
-                <>
-                  <p className="text-sm text-gray-500">
-                    Don&apos;t have an account?{' '}
-                    <Link
-                      to={`/register${redirect !== '/' ? `?redirect=${redirect}` : ''}`}
-                      className="text-yellow-400 font-semibold hover:text-yellow-300 transition-colors"
-                    >
-                      Create one free
-                    </Link>
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    Want to partner with us?{' '}
-                    <Link to="/join/partner" className="text-gray-400 hover:text-white transition-colors">Join With Us →</Link>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-500">
-                    Not approved yet?{' '}
-                    <Link to="/join" className="text-yellow-400 font-semibold hover:text-yellow-300 transition-colors">
-                      Submit application →
-                    </Link>
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    Customer account?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setMode('customer')}
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      Switch to customer login
-                    </button>
-                  </p>
-                </>
-              )}
+              <p className="text-sm text-gray-500">
+                Don&apos;t have an account?{' '}
+                <Link
+                  to={`/register${redirect !== '/' ? `?redirect=${redirect}` : ''}`}
+                  className="text-yellow-400 font-semibold hover:text-yellow-300 transition-colors"
+                >
+                  Create one free
+                </Link>
+              </p>
+              <p className="text-xs text-gray-600">
+                Want to join our team?{' '}
+                <Link to="/join/freelancer" className="text-gray-400 hover:text-white transition-colors">Apply here →</Link>
+              </p>
+              <p className="text-xs text-gray-600">
+                Staff / Admin?{' '}
+                <a href="http://localhost:3001" className="text-gray-400 hover:text-white transition-colors">Use Admin Panel →</a>
+              </p>
             </div>
           </div>
         </div>

@@ -20,6 +20,7 @@ import ForumsPage from './pages/ForumsPage';
 import UsersPage from './pages/UsersPage';
 import ReportsPage from './pages/ReportsPage';
 import RegistrationsPage from './pages/RegistrationsPage';
+import DealsPage from './pages/DealsPage';
 
 const App = () => {
   const { isAuthenticated, fetchProfile } = useAuthStore();
@@ -50,6 +51,7 @@ const App = () => {
           <Route path="/registrations" element={<RegistrationsPage />} />
           <Route path="/forums" element={<ForumsPage />} />
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/deals" element={<DealsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
         </Route>
       </Route>

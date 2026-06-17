@@ -66,5 +66,12 @@ export const createServiceSchema = z.object({
     shortDescription: z.string().max(300).optional(),
     price: z.number().min(0).optional(),
     sortOrder: z.number().optional(),
+    features: z.preprocess(
+      (v) => v === undefined || v === null ? [] : Array.isArray(v) ? v : [v],
+      z.array(z.string().min(1))
+    ).optional(),
+    emoji: z.string().optional(),
+    badge: z.string().optional(),
+    accentColor: z.enum(['blue', 'cyan', 'orange', 'purple', 'yellow', 'amber', 'green', 'red']).optional(),
   }),
 });

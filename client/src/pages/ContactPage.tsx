@@ -1,22 +1,36 @@
 import { Helmet } from 'react-helmet-async';
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
-import { FiArrowRight, FiCheck, FiClock, FiUsers, FiAward, FiShoppingCart, FiHome, FiTool, FiBox, FiMessageCircle, FiLink, FiGlobe } from 'react-icons/fi';
+import { FiArrowRight, FiCheck, FiClock, FiUsers, FiAward, FiShoppingCart, FiHome, FiTool, FiBox, FiMessageCircle, FiLink, FiGlobe, FiCheckCircle } from 'react-icons/fi';
 import { FaWhatsapp, FaFacebook, FaInstagram } from 'react-icons/fa';
 import { useState } from 'react';
+import api from '../lib/api';
 
 const ContactPage = () => {
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     const formData = new FormData(e.currentTarget);
-    const subject = encodeURIComponent(formData.get('subject') as string);
-    const body = encodeURIComponent(
-      `Name: ${formData.get('name')}\nPhone: ${formData.get('phone')}\n\n${formData.get('message')}`
-    );
-    window.location.href = `mailto:info@pravaraworldtech.com?subject=${subject}&body=${body}`;
-    setTimeout(() => setLoading(false), 1000);
+    try {
+      await api.post('/inquiries', {
+        name: formData.get('name') as string,
+        phone: formData.get('phone') as string,
+        email: formData.get('email') as string || undefined,
+        subject: formData.get('subject') as string,
+        message: formData.get('message') as string,
+        source: 'website',
+      });
+      setSubmitted(true);
+      (e.target as HTMLFormElement).reset();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to send. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inquiryTypes = [
@@ -179,30 +193,46 @@ const ContactPage = () => {
             </div>
 
             <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-xl p-10">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Full Name</label>
-                    <input type="text" name="name" required className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="Your full name" />
+              {submitted ? (
+                <div className="text-center py-8">
+                  <FiCheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+                  <p className="text-gray-400 mb-6">Our team will review your inquiry and get back to you within 24 hours.</p>
+                  <button onClick={() => setSubmitted(false)} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                    Send Another
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Full Name *</label>
+                      <input type="text" name="name" required className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="Your full name" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Phone Number *</label>
+                      <input type="tel" name="phone" required minLength={10} className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="Your phone number" />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Phone Number</label>
-                    <input type="tel" name="phone" className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="Your phone number" />
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Email Address</label>
+                    <input type="email" name="email" className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="you@email.com (optional)" />
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Subject</label>
-                  <input type="text" name="subject" required className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="What is this inquiry about?" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Message</label>
-                  <textarea name="message" required rows={6} className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors resize-none" placeholder="Tell us more about your inquiry. Include details like project type, budget, timeline, etc..." />
-                </div>
-                <button type="submit" disabled={loading} className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                  <span>{loading ? 'Sending...' : 'Send Message'}</span>
-                  {!loading && <FiArrowRight className="w-4 h-4" />}
-                </button>
-              </form>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Subject *</label>
+                    <input type="text" name="subject" required className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors" placeholder="What is this inquiry about?" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Message *</label>
+                    <textarea name="message" required rows={6} className="w-full px-4 py-3 bg-blue-900/30 border-2 border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-colors resize-none" placeholder="Tell us more about your inquiry. Include details like project type, budget, timeline, etc..." />
+                  </div>
+                  {error && <p className="text-red-400 text-sm">{error}</p>}
+                  <button type="submit" disabled={loading} className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <span>{loading ? 'Sending...' : 'Send Message'}</span>
+                    {!loading && <FiArrowRight className="w-4 h-4" />}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

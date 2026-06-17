@@ -14,8 +14,8 @@ import rateLimit from 'express-rate-limit';
 const router = Router();
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: parseInt(process.env.LOGIN_RATE_LIMIT_MAX || '5', 10),
+  windowMs: config.rateLimit.windowMs,
+  max: config.rateLimit.loginMax,
   message: { success: false, message: 'Too many login attempts, try again later', data: null },
 });
 

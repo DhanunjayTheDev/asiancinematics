@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { FiCheckCircle, FiUser, FiBriefcase, FiSend } from 'react-icons/fi';
+import { FiCheckCircle, FiUser, FiBriefcase, FiSend, FiEye, FiEyeOff } from 'react-icons/fi';
 import api from '../lib/api';
 import CustomSelect from '../components/CustomSelect';
 
@@ -55,7 +55,10 @@ const JoinWithUsPage = () => {
     skills: [] as string[], portfolio: '', availability: '',
     position: '', qualification: '', resumeLink: '',
     experience: '', message: '',
+    password: '', confirmPassword: '',
   });
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -73,10 +76,19 @@ const JoinWithUsPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.password && form.password !== form.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (form.password && form.password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      await api.post('/registrations', { type, ...form });
+      const { confirmPassword, ...payload } = form;
+      await api.post('/registrations', { type, ...payload });
       setSubmitted(true);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to submit. Please try again.');
@@ -93,7 +105,7 @@ const JoinWithUsPage = () => {
         <div className="text-center max-w-md">
           <FiCheckCircle className={`w-20 h-20 mx-auto mb-6 ${ac.text}`} />
           <h2 className="text-3xl font-bold text-white mb-3">Application Submitted!</h2>
-          <p className="text-gray-400 mb-8">Thank you for your interest. Our team will review your application and reach out within 48 hours.</p>
+          <p className="text-gray-400 mb-8">Thank you for your interest. Our team will review your application within 48 hours. Once approved, you can log in using your email and the password you set.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/" className={`px-6 py-3 rounded-full font-bold ${ac.btn} transition-colors`}>Go Home</Link>
             <Link to="/contact" className="px-6 py-3 rounded-full font-bold bg-gray-800 text-white hover:bg-gray-700 transition-colors">Contact Us</Link>
@@ -245,6 +257,50 @@ const JoinWithUsPage = () => {
               <textarea name="message" value={form.message} onChange={handleChange} rows={3}
                 className={`${inputCls} resize-none`}
                 placeholder="Tell us more about yourself and what you're looking for..." />
+            </div>
+
+            {/* Password section */}
+            <div className="border-t border-gray-700/50 pt-5">
+              <p className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-widest">Set Login Password</p>
+              <p className="text-xs text-gray-500 mb-4">Create a password to log in once your application is approved.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 mb-1.5">Password *</label>
+                  <div className="relative">
+                    <input
+                      name="password"
+                      value={form.password}
+                      onChange={handleChange}
+                      required
+                      type={showPwd ? 'text' : 'password'}
+                      placeholder="Min. 8 characters"
+                      className={`${inputCls} pr-10`}
+                    />
+                    <button type="button" onClick={() => setShowPwd(v => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200">
+                      {showPwd ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 mb-1.5">Confirm Password *</label>
+                  <div className="relative">
+                    <input
+                      name="confirmPassword"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      required
+                      type={showConfirm ? 'text' : 'password'}
+                      placeholder="Re-enter password"
+                      className={`${inputCls} pr-10`}
+                    />
+                    <button type="button" onClick={() => setShowConfirm(v => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200">
+                      {showConfirm ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {error && <p className="text-red-400 text-sm">{error}</p>}

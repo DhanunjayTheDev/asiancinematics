@@ -1,11 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
-import { HiOutlineCog, HiOutlineCurrencyRupee } from 'react-icons/hi';
+import { HiOutlineCog, HiOutlineCurrencyRupee, HiOutlinePhotograph, HiOutlineX } from 'react-icons/hi';
 import api from '../lib/api';
 import Loading from '../components/Loading';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
+
+const ACCENT_COLORS = ['blue', 'cyan', 'orange', 'purple', 'yellow', 'amber', 'green', 'red'] as const;
+type AccentColor = typeof ACCENT_COLORS[number];
+
+const accentBadge: Record<AccentColor, string> = {
+  blue: 'bg-blue-600/80 text-white',
+  cyan: 'bg-cyan-600/80 text-white',
+  orange: 'bg-orange-600/80 text-white',
+  purple: 'bg-purple-600/80 text-white',
+  yellow: 'bg-yellow-500/80 text-black',
+  amber: 'bg-amber-600/80 text-black',
+  green: 'bg-green-600/80 text-white',
+  red: 'bg-red-600/80 text-white',
+};
+
+const defaultForm = {
+  name: '',
+  description: '',
+  shortDescription: '',
+  price: '',
+  sortOrder: '0',
+  isActive: true,
+  emoji: '🔧',
+  badge: 'Service',
+  accentColor: 'blue' as AccentColor,
+  features: '',
+};
 
 const ServicesPage = () => {
   const [services, setServices] = useState<any[]>([]);
@@ -13,43 +40,83 @@ const ServicesPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: '', description: '', shortDescription: '', price: '', sortOrder: '0', isActive: true });
+  const [form, setForm] = useState(defaultForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchServices = () => {
     setLoading(true);
-    api.get('/services').then(({ data }) => setServices(data.data)).catch((err) => {
-      console.error('Failed to load services:', err);
-      toast.error('Failed to load services');
-    }).finally(() => setLoading(false));
+    api.get('/services')
+      .then(({ data }) => setServices(data.data))
+      .catch(() => toast.error('Failed to load services'))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchServices(); }, []);
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ name: '', description: '', shortDescription: '', price: '', sortOrder: '0', isActive: true });
+    setForm(defaultForm);
+    setImageFile(null);
+    setImagePreview('');
     setModalOpen(true);
   };
 
   const openEdit = (s: any) => {
     setEditing(s);
     setForm({
-      name: s.name, description: s.description, shortDescription: s.shortDescription || '',
-      price: s.price ? String(s.price) : '', sortOrder: String(s.sortOrder || 0), isActive: s.isActive !== false,
+      name: s.name,
+      description: s.description,
+      shortDescription: s.shortDescription || '',
+      price: s.price ? String(s.price) : '',
+      sortOrder: String(s.sortOrder || 0),
+      isActive: s.isActive !== false,
+      emoji: s.emoji || '🔧',
+      badge: s.badge || 'Service',
+      accentColor: (s.accentColor || 'blue') as AccentColor,
+      features: (s.features || []).join('\n'),
     });
+    setImageFile(null);
+    setImagePreview(s.image || '');
     setModalOpen(true);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
   const handleSave = async () => {
+    if (!form.name || !form.description) {
+      toast.error('Name and description are required');
+      return;
+    }
     setSaving(true);
     try {
-      const body: any = { name: form.name, description: form.description, shortDescription: form.shortDescription, sortOrder: Number(form.sortOrder), isActive: form.isActive };
-      if (form.price) body.price = Number(form.price);
+      const fd = new FormData();
+      fd.append('name', form.name);
+      fd.append('description', form.description);
+      if (form.shortDescription) fd.append('shortDescription', form.shortDescription);
+      if (form.price) fd.append('price', form.price);
+      fd.append('sortOrder', form.sortOrder);
+      fd.append('isActive', String(form.isActive));
+      fd.append('emoji', form.emoji);
+      fd.append('badge', form.badge);
+      fd.append('accentColor', form.accentColor);
+
+      const featuresArr = form.features.split('\n').map(f => f.trim()).filter(Boolean);
+      featuresArr.forEach((f) => fd.append('features', f));
+
+      if (imageFile) fd.append('image', imageFile);
+
       if (editing) {
-        await api.put(`/services/${editing._id}`, body);
+        await api.put(`/services/${editing._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Service updated');
       } else {
-        await api.post('/services', body);
+        await api.post('/services', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Service created');
       }
       setModalOpen(false);
@@ -89,29 +156,46 @@ const ServicesPage = () => {
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <HiOutlineCog className="w-12 h-12 text-gray-700 mb-3" />
             <p className="text-gray-400 font-medium">No services yet</p>
-            <p className="text-gray-600 text-sm mt-1">Click "+ Add Service" to create one</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {services.map((s) => (
-              <div key={s._id} className={`bg-gray-900 border rounded-2xl p-5 transition-colors hover:border-blue-500/40 ${s.isActive !== false ? 'border-gray-800' : 'border-gray-800 opacity-60'}`}>
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                    <HiOutlineCog className="w-5 h-5 text-blue-400" />
+              <div key={s._id} className={`bg-gray-900 border rounded-2xl overflow-hidden transition-colors hover:border-blue-500/40 ${s.isActive !== false ? 'border-gray-800' : 'border-gray-800 opacity-60'}`}>
+                {s.image && (
+                  <div className="relative h-36 overflow-hidden">
+                    <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <span className="absolute bottom-2 left-3 text-xl">{s.emoji}</span>
+                    {s.badge && (
+                      <span className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${accentBadge[s.accentColor as AccentColor] || 'bg-gray-700 text-white'}`}>{s.badge}</span>
+                    )}
                   </div>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    s.isActive !== false ? 'text-green-400 bg-green-400/10' : 'text-gray-500 bg-gray-800'
-                  }`}>{s.isActive !== false ? 'Active' : 'Inactive'}</span>
-                </div>
-                <h3 className="text-sm font-bold text-white mb-1 leading-snug">{s.name}</h3>
-                {s.shortDescription && <p className="text-[11px] text-gray-500 mb-2">{s.shortDescription}</p>}
-                <div className="flex items-center gap-1.5 mb-4">
-                  <HiOutlineCurrencyRupee className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="text-sm font-semibold text-white">{s.price ? `₹${s.price.toLocaleString()}` : 'On Request'}</span>
-                </div>
-                <div className="flex gap-2 pt-3 border-t border-gray-800">
-                  <Button onClick={() => openEdit(s)} variant="secondary" size="sm" className="flex-1">Edit</Button>
-                  <Button onClick={() => handleDelete(s._id)} variant="danger" size="sm" className="flex-1">Delete</Button>
+                )}
+                <div className="p-4">
+                  {!s.image && (
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="text-2xl">{s.emoji}</span>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${s.isActive !== false ? 'text-green-400 bg-green-400/10' : 'text-gray-500 bg-gray-800'}`}>{s.isActive !== false ? 'Active' : 'Inactive'}</span>
+                    </div>
+                  )}
+                  <h3 className="text-sm font-bold text-white mb-1">{s.name}</h3>
+                  {s.shortDescription && <p className="text-[11px] text-gray-500 mb-2">{s.shortDescription}</p>}
+                  {s.features?.length > 0 && (
+                    <ul className="text-[10px] text-gray-400 space-y-0.5 mb-2">
+                      {s.features.slice(0, 3).map((f: string, i: number) => (
+                        <li key={i} className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-blue-400 flex-shrink-0" />{f}</li>
+                      ))}
+                      {s.features.length > 3 && <li className="text-gray-600">+{s.features.length - 3} more</li>}
+                    </ul>
+                  )}
+                  <div className="flex items-center gap-1 mb-3">
+                    <HiOutlineCurrencyRupee className="w-3.5 h-3.5 text-blue-400" />
+                    <span className="text-sm font-semibold text-white">{s.price ? `₹${s.price.toLocaleString()}` : 'On Request'}</span>
+                  </div>
+                  <div className="flex gap-2 pt-2 border-t border-gray-800">
+                    <Button onClick={() => openEdit(s)} variant="secondary" size="sm" className="flex-1">Edit</Button>
+                    <Button onClick={() => handleDelete(s._id)} variant="danger" size="sm" className="flex-1">Delete</Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -120,9 +204,59 @@ const ServicesPage = () => {
       </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Service' : 'Add Service'}>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          {/* Image upload */}
           <div>
-            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Name</label>
+            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Service Image</label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative cursor-pointer border-2 border-dashed border-gray-700 rounded-xl overflow-hidden hover:border-blue-500 transition-colors"
+              style={{ height: imagePreview ? 'auto' : 100 }}
+            >
+              {imagePreview ? (
+                <div className="relative">
+                  <img src={imagePreview} alt="preview" className="w-full h-40 object-cover rounded-xl" />
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setImageFile(null); setImagePreview(''); }}
+                    className="absolute top-2 right-2 bg-black/70 rounded-full p-1 hover:bg-black"
+                  >
+                    <HiOutlineX className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full py-6 gap-1">
+                  <HiOutlinePhotograph className="w-8 h-8 text-gray-600" />
+                  <p className="text-xs text-gray-500">Click to upload image</p>
+                </div>
+              )}
+            </div>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+          </div>
+
+          {/* Emoji + Badge + Accent */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Emoji</label>
+              <input type="text" value={form.emoji} onChange={(e) => setForm({ ...form, emoji: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 text-center text-xl" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Badge</label>
+              <input type="text" value={form.badge} onChange={(e) => setForm({ ...form, badge: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Accent Color</label>
+              <select value={form.accentColor} onChange={(e) => setForm({ ...form, accentColor: e.target.value as AccentColor })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                {ACCENT_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Name *</label>
             <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
@@ -132,15 +266,21 @@ const ServicesPage = () => {
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Description</label>
+            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Description *</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} required
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 resize-none" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Features (one per line)</label>
+            <textarea value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })} rows={4}
+              placeholder="CCTV Surveillance Systems&#10;Intrusion Alarm Systems&#10;Solar Fencing"
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 resize-none" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Price (₹)</label>
-              <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" min="0" />
+              <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} min="0"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Sort Order</label>

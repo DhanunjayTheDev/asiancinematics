@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import bcrypt from 'bcryptjs';
 import Registration from '../models/Registration';
 import User from '../models/User';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -27,23 +26,30 @@ const createSchema = z.object({
     qualification: z.string().optional(),
     resumeLink: z.string().optional(),
     experience: z.string().optional(),
+    password: z.string().min(8, 'Password must be at least 8 characters').optional(),
     message: z.string().optional(),
   }),
 });
 
-// POST /api/v1/registrations public submit
+// POST /api/v1/registrations  public submit
 router.post(
   '/',
   validate(createSchema),
   asyncHandler(async (req, res) => {
-    const existing = await Registration.findOne({ email: req.body.email, type: req.body.type, status: { $ne: 'rejected' }, isDeleted: false });
+    const existing = await Registration.findOne({
+      email: req.body.email,
+      type: req.body.type,
+      status: { $ne: 'rejected' },
+      isDeleted: false,
+    });
     if (existing) throw new BadRequestError('Application already submitted with this email');
+
     const reg = await Registration.create(req.body);
     sendSuccess(res, reg, 'Registration submitted successfully', 201);
   })
 );
 
-// GET /api/v1/registrations/all admin
+// GET /api/v1/registrations/all  admin
 router.get(
   '/all',
   authenticate,
@@ -67,32 +73,32 @@ router.get(
   })
 );
 
-// PUT /api/v1/registrations/:id/status admin approve/reject
+// PUT /api/v1/registrations/:id/status  admin approve/reject
 router.put(
   '/:id/status',
   authenticate,
   authorize('super_admin'),
   asyncHandler(async (req, res) => {
     const { status, rejectionReason } = req.body;
-    const reg = await Registration.findById(req.params.id);
+    const reg = await Registration.findById(req.params.id).select('+password');
     if (!reg || reg.isDeleted) throw new NotFoundError('Registration not found');
 
     reg.status = status;
     if (rejectionReason) reg.rejectionReason = rejectionReason;
 
-    // On approve: create user account
     if (status === 'approved') {
-      const userRole = reg.type === 'partner' ? 'customer' : reg.type as 'freelancer' | 'employee';
+      const userRole = reg.type === 'partner' ? 'customer' : (reg.type as 'freelancer' | 'employee');
       const existingUser = await User.findOne({ email: reg.email, isDeleted: false });
+
       if (!existingUser) {
-        const tempPassword = `PWT@${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-        const salt = await bcrypt.genSalt(12);
-        const hashed = await bcrypt.hash(tempPassword, salt);
+        // Use the password the user set during registration.
+        // Pass plain text — pre-save hook hashes it (no double-hash).
+        const plainPassword = reg.password || `PWT@${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const newUser = await User.create({
           name: reg.name,
           email: reg.email,
           phone: reg.phone,
-          password: hashed,
+          password: plainPassword,
           role: userRole,
           isActive: true,
         });
@@ -100,6 +106,9 @@ router.put(
       } else {
         reg.approvedUserId = existingUser._id as any;
       }
+
+      // Clear stored password after account creation
+      reg.password = undefined;
     }
 
     await reg.save();
@@ -107,7 +116,7 @@ router.put(
   })
 );
 
-// GET /api/v1/registrations/staff list approved employees + freelancers (for assign dropdown)
+// GET /api/v1/registrations/staff  approved employees + freelancers (assign dropdown)
 router.get(
   '/staff',
   authenticate,

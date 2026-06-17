@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Product from '../models/Product';
+import Deal from '../models/Deal';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess, sendPaginated } from '../utils/response';
 import { NotFoundError, BadRequestError } from '../utils/errors';
@@ -28,8 +29,10 @@ router.get(
     const featured = req.query.featured as string;
     const minPrice = req.query.minPrice as string;
     const maxPrice = req.query.maxPrice as string;
+    const dealId = req.query.deal as string;
+    const dealType = req.query.dealType as string;
 
-    const cacheKey = `products:${page}:${limit}:${category || ''}:${search || ''}:${sort || ''}:${featured || ''}`;
+    const cacheKey = `products:${page}:${limit}:${category || ''}:${search || ''}:${sort || ''}:${featured || ''}:${dealId || ''}:${dealType || ''}`;
     const cached = await cacheGet(cacheKey);
     if (cached) {
       const data = JSON.parse(cached);
@@ -38,6 +41,20 @@ router.get(
     }
 
     const filter: Record<string, unknown> = { isDeleted: false, isActive: true };
+
+    // Filter by specific deal ID
+    if (dealId) {
+      const deal = await Deal.findOne({ _id: dealId, isActive: true, isDeleted: false });
+      filter._id = { $in: deal && deal.products.length > 0 ? deal.products : [] };
+    }
+
+    // Filter by deal type — collect products from all active deals of that type
+    if (!dealId && dealType) {
+      const typeDeals = await Deal.find({ type: dealType, isActive: true, isDeleted: false });
+      const productIds = typeDeals.flatMap(d => d.products);
+      filter._id = { $in: productIds };
+    }
+
     if (category) filter.category = category;
     if (featured === 'true') filter.isFeatured = true;
     if (search) {
@@ -87,7 +104,7 @@ router.post(
     const existing = await Product.findOne({ slug, isDeleted: false });
     if (existing) throw new BadRequestError('Product with this name already exists');
 
-    const images = (req.files as Express.Multer.File[])?.map((f) => f.filename) || [];
+    const images = (req.files as Express.Multer.File[])?.map((f) => f.path) || [];
     const product = await Product.create({ ...req.body, slug, images });
 
     await cacheDelPattern('products:*');
@@ -109,7 +126,7 @@ router.put(
       updateData.slug = slugify(req.body.name);
     }
 
-    const newImages = (req.files as Express.Multer.File[])?.map((f) => f.filename);
+    const newImages = (req.files as Express.Multer.File[])?.map((f) => f.path);
     if (newImages?.length) {
       const existing = await Product.findById(req.params.id);
       updateData.images = [...(existing?.images || []), ...newImages];

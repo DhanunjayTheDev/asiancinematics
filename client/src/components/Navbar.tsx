@@ -6,7 +6,6 @@ import { useCartStore } from '../store/cartStore';
 import logo from '../assets/pravaraworldmainlogo.png';
 
 const joinSubLinks = [
-  { to: '/join/partner', label: '🤝 Partner Registration', desc: 'Dealer / Distributor / Channel' },
   { to: '/join/freelancer', label: '💼 Freelancer Registration', desc: 'Independent Technician / Installer' },
   { to: '/join/employee', label: '👤 Employee Registration', desc: 'Full-Time / Part-Time Position' },
 ];

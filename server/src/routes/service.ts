@@ -56,7 +56,7 @@ router.post(
     const existing = await Service.findOne({ slug, isDeleted: false });
     if (existing) throw new BadRequestError('Service with this name already exists');
 
-    const image = req.file?.filename;
+    const image = req.file?.path;
     const service = await Service.create({ ...req.body, slug, image });
     await createAuditLog(req, 'CREATE_SERVICE', 'Service', service._id.toString());
     sendSuccess(res, service, 'Service created', 201);
@@ -72,7 +72,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const updateData = { ...req.body };
     if (req.body.name) updateData.slug = slugify(req.body.name);
-    if (req.file) updateData.image = req.file.filename;
+    if (req.file) updateData.image = req.file.path;
 
     const service = await Service.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!service) throw new NotFoundError('Service not found');
@@ -133,11 +133,11 @@ router.get(
   })
 );
 
-// GET /api/v1/services/tickets/all (admin + support)
+// GET /api/v1/services/tickets/all (admin + support + employee + freelancer)
 router.get(
   '/tickets/all',
   authenticate,
-  authorize('super_admin', 'support', 'employee'),
+  authorize('super_admin', 'support', 'employee', 'freelancer'),
   asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
@@ -147,7 +147,9 @@ router.get(
     const search = req.query.search as string;
 
     const filter: Record<string, unknown> = { isDeleted: false };
-    if (req.user!.role === 'support') filter.assignedTo = req.user!._id;
+    if (['support', 'employee', 'freelancer'].includes(req.user!.role)) {
+      filter.assignedTo = req.user!._id;
+    }
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
     if (search) filter.ticketNumber = { $regex: search, $options: 'i' };

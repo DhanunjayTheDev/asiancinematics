@@ -30,6 +30,10 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const { data } = await api.post('/auth/login', { email, password });
+          const role = data.data.user?.role;
+          if (role && role !== 'customer') {
+            throw new Error('Staff accounts must log in via the Admin Panel.');
+          }
           set({
             user: data.data.user,
             accessToken: data.data.accessToken,

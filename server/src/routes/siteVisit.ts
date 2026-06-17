@@ -33,11 +33,11 @@ router.get(
   })
 );
 
-// GET /api/v1/site-visits/all (admin)
+// GET /api/v1/site-visits/all (admin + staff)
 router.get(
   '/all',
   authenticate,
-  authorize('super_admin', 'employee'),
+  authorize('super_admin', 'support', 'employee', 'freelancer'),
   asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
@@ -46,7 +46,9 @@ router.get(
 
     const filter: Record<string, unknown> = { isDeleted: false };
     if (status) filter.status = status;
-    if (req.user!.role === 'employee') filter.assignedTo = req.user!._id;
+    if (['employee', 'freelancer', 'support'].includes(req.user!.role)) {
+      filter.assignedTo = req.user!._id;
+    }
 
     const [visits, total] = await Promise.all([
       SiteVisit.find(filter)
@@ -66,7 +68,7 @@ router.get(
 router.put(
   '/:id/status',
   authenticate,
-  authorize('super_admin', 'employee'),
+  authorize('super_admin', 'support', 'employee', 'freelancer'),
   asyncHandler(async (req, res) => {
     const { status } = req.body;
     const visit = await SiteVisit.findByIdAndUpdate(req.params.id, { status }, { new: true });

@@ -20,6 +20,7 @@ export interface IRegistration extends Document {
   resumeLink?: string;
   // Common
   experience?: string;
+  password?: string;
   message?: string;
   rejectionReason?: string;
   approvedUserId?: mongoose.Types.ObjectId;
@@ -47,6 +48,7 @@ const registrationSchema = new Schema<IRegistration>(
     resumeLink: { type: String, trim: true },
     // Common
     experience: { type: String, trim: true },
+    password: { type: String, select: false },
     message: { type: String, trim: true },
     rejectionReason: { type: String, trim: true },
     approvedUserId: { type: Schema.Types.ObjectId, ref: 'User' },

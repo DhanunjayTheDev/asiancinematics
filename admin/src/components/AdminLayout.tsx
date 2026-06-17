@@ -21,6 +21,7 @@ import {
   HiOutlineChatAlt2,
   HiOutlineSearch,
   HiOutlineTicket,
+  HiOutlineGift,
 } from 'react-icons/hi';
 
 const NAV_SECTIONS = [
@@ -37,6 +38,7 @@ const NAV_SECTIONS = [
       { to: '/orders', label: 'Orders', icon: HiOutlineShoppingCart, roles: ['super_admin', 'support', 'employee', 'freelancer'] },
       { to: '/products', label: 'Products', icon: HiOutlineCube, roles: ['super_admin', 'employee'] },
       { to: '/categories', label: 'Categories', icon: HiOutlineTag, roles: ['super_admin', 'employee'] },
+      { to: '/deals', label: 'Deals & Offers', icon: HiOutlineGift, roles: ['super_admin'] },
     ],
   },
   {

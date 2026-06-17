@@ -98,6 +98,11 @@ export interface Service {
   image?: string;
   price?: number;
   isActive: boolean;
+  features?: string[];
+  emoji?: string;
+  badge?: string;
+  accentColor?: string;
+  sortOrder?: number;
 }
 
 export interface ServiceTicket {
