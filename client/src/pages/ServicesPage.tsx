@@ -158,7 +158,7 @@ const ServicesPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
               {mainServices.map((s) => {
-                const cfg = ACCENT_CFG[s.accentColor] || ACCENT_CFG.blue;
+                const cfg = ACCENT_CFG[s.accentColor ?? 'blue'] || ACCENT_CFG.blue;
                 const openModal = slugModalMap[s.slug];
                 return (
                   <div key={s._id} className={`group bg-gradient-to-br ${cfg.gradient} to-black border ${cfg.border} rounded-xl overflow-hidden ${cfg.hoverBorder} transition-all hover:shadow-xl ${cfg.hoverShadow} flex flex-col`}>
@@ -175,9 +175,9 @@ const ServicesPage = () => {
                     <div className="p-6 flex flex-col flex-1">
                       <h3 className="text-xl font-bold text-white mb-2">{s.name}</h3>
                       {s.shortDescription && <p className="text-gray-400 mb-4 text-sm">{s.shortDescription}</p>}
-                      {s.features?.length > 0 && (
+                      {(s.features?.length ?? 0) > 0 && (
                         <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                          {s.features.map((f: string, i: number) => (
+                          {s.features?.map((f: string, i: number) => (
                             <li key={i} className="flex items-center gap-2">
                               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
                               {f}

@@ -13,6 +13,20 @@ import bannerImage from '../assets/BANNERASIANPRAVARA.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const ACCENT_CFG: Record<string, { gradient: string; border: string; hoverBorder: string; hoverShadow: string; dot: string; badge: string }> = {
+  blue:   { gradient: 'from-blue-900/20',   border: 'border-blue-500/20',   hoverBorder: 'hover:border-blue-500/50',   hoverShadow: 'hover:shadow-blue-500/10',   dot: 'bg-blue-400',   badge: 'bg-blue-600/80 text-white' },
+  cyan:   { gradient: 'from-cyan-900/20',   border: 'border-cyan-500/20',   hoverBorder: 'hover:border-cyan-500/50',   hoverShadow: 'hover:shadow-cyan-500/10',   dot: 'bg-cyan-400',   badge: 'bg-cyan-600/80 text-white' },
+  orange: { gradient: 'from-orange-900/20', border: 'border-orange-500/20', hoverBorder: 'hover:border-orange-500/50', hoverShadow: 'hover:shadow-orange-500/10', dot: 'bg-orange-400', badge: 'bg-orange-600/80 text-white' },
+  purple: { gradient: 'from-purple-900/20', border: 'border-purple-500/20', hoverBorder: 'hover:border-purple-500/50', hoverShadow: 'hover:shadow-purple-500/10', dot: 'bg-purple-400', badge: 'bg-purple-600/80 text-white' },
+  yellow: { gradient: 'from-yellow-900/20', border: 'border-yellow-500/20', hoverBorder: 'hover:border-yellow-500/50', hoverShadow: 'hover:shadow-yellow-500/10', dot: 'bg-yellow-400', badge: 'bg-yellow-500/80 text-black' },
+  amber:  { gradient: 'from-amber-900/20',  border: 'border-amber-500/20',  hoverBorder: 'hover:border-amber-500/50',  hoverShadow: 'hover:shadow-amber-500/10',  dot: 'bg-amber-400',  badge: 'bg-amber-600/80 text-black' },
+  green:  { gradient: 'from-green-900/20',  border: 'border-green-500/20',  hoverBorder: 'hover:border-green-500/50',  hoverShadow: 'hover:shadow-green-500/10',  dot: 'bg-green-400',  badge: 'bg-green-600/80 text-white' },
+  red:    { gradient: 'from-red-900/20',    border: 'border-red-500/20',    hoverBorder: 'hover:border-red-500/50',    hoverShadow: 'hover:shadow-red-500/10',    dot: 'bg-red-400',    badge: 'bg-red-600/80 text-white' },
+};
+
+const EXTENDED_SLUGS = ['design-drawings-planning', '3d-rendering-visualization'];
+const EXCLUDED_SLUGS = ['annual-maintenance-contract', ...EXTENDED_SLUGS];
+
 const LandingPage = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -386,133 +400,41 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Service Cards */}
+          {/* Service Cards from backend */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Security Systems */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=600&auto=format&fit=crop&q=60" alt="Security Systems" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🔐</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-blue-600/80 text-white rounded-full">Security</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Security Systems</h3>
-                <p className="text-gray-400 mb-4 text-sm">Advanced protection solutions built for total peace of mind.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />CCTV Surveillance Systems</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Intrusion Alarm Systems</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Solar Fencing Solutions</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />Remote Monitoring & Mobile Access</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">🛡️ Smart protection for homes, businesses, and large-scale properties.</p>
-              </div>
-            </div>
-
-            {/* Smart Home Automation */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&auto=format&fit=crop&q=60" alt="Smart Home Automation" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🏡</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-cyan-600/80 text-white rounded-full">Automation</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Smart Home Automation</h3>
-                <p className="text-gray-400 mb-4 text-sm">Control your space with intelligence and ease.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Smart Lighting & Scene Control</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Curtain & Blind Automation</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Smart Gate & Door Access</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />Centralized App-Based Control</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">⚡ Convenience, efficiency, and futuristic living all in one system.</p>
-              </div>
-            </div>
-
-            {/* Home Theater & Audio */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=60" alt="Home Theater" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🎬</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-orange-600/80 text-white rounded-full">Cinema</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Home Theater & Audio Solutions</h3>
-                <p className="text-gray-400 mb-4 text-sm">Bring cinematic excellence into your home.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Customized Home Theatre Rooms</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Living Room Cinema Setups</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Dolby Atmos & Surround Sound Systems</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />Acoustic Treatment & Soundproofing</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">🎧 Engineered for immersive audio-visual experiences.</p>
-              </div>
-            </div>
-
-            {/* Interior & Decorative */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=60" alt="Interior Design" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🎨</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-purple-600/80 text-white rounded-full">Interior</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Interior & Decorative Designs</h3>
-                <p className="text-gray-400 mb-4 text-sm">Where aesthetics meet innovation.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Stretch Ceilings</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Galaxy Star Lighting Designs</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Premium Wall & Ceiling Finishes</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Customized Decorative Concepts</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">✨ Transform ordinary spaces into extraordinary environments.</p>
-              </div>
-            </div>
-
-            {/* Lighting Solutions */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&auto=format&fit=crop&q=60" alt="Lighting Solutions" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">💡</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-yellow-600/80 text-black rounded-full">Lighting</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Lighting Solutions</h3>
-                <p className="text-gray-400 mb-4 text-sm">Perfect lighting for every mood and purpose.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Smart Lighting Systems</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Architectural & Ambient Lighting</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Decorative Lighting Installations</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0" />Energy-Efficient Solutions</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">💫 Enhancing atmosphere through intelligent illumination.</p>
-              </div>
-            </div>
-
-            {/* Structural Works */}
-            <div className="group bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10">
-              <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&auto=format&fit=crop&q=60" alt="Structural Works" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🏗</span>
-                <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 bg-amber-600/80 text-black rounded-full">Structural</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Structural Works</h3>
-                <p className="text-gray-400 mb-4 text-sm">Strong, stylish, and built to last.</p>
-                <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Pergolas & Outdoor Structures</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Car Parking Sheds</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Tensile Fabric Canopies</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />Custom Fabrication Works</li>
-                </ul>
-                <p className="text-yellow-400 text-xs font-semibold">🏗️ Durability meets modern architectural design.</p>
-              </div>
-            </div>
+            {services.filter(s => !EXCLUDED_SLUGS.includes(s.slug)).map(s => {
+              const cfg = ACCENT_CFG[s.accentColor ?? 'blue'] || ACCENT_CFG.blue;
+              return (
+                <div key={s._id} className={`group bg-gradient-to-br ${cfg.gradient} to-black border ${cfg.border} rounded-xl overflow-hidden ${cfg.hoverBorder} transition-all hover:shadow-xl ${cfg.hoverShadow}`}>
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={s.image || 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&auto=format&fit=crop&q=60'}
+                      alt={s.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-2xl">{s.emoji || '🔧'}</span>
+                    {s.badge && <span className={`absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded-full ${cfg.badge}`}>{s.badge}</span>}
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2">{s.name}</h3>
+                    {s.shortDescription && <p className="text-gray-400 mb-4 text-sm">{s.shortDescription}</p>}
+                    {(s.features?.length ?? 0) > 0 && (
+                      <ul className="text-sm text-gray-300 space-y-1.5 mb-4">
+                        {s.features?.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />{f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Link to="/services" className="text-yellow-400 text-xs font-semibold hover:text-yellow-300 transition-colors">
+                      Learn More →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -528,48 +450,41 @@ const LandingPage = () => {
             </p>
           </div>
 
+          {/* Extended Expertise from backend */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Design & Engineering */}
-            <div className="group bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all">
-              <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=700&auto=format&fit=crop&q=60" alt="Design & Engineering" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">📐</span>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-2">Design & Engineering Services</h3>
-                <h4 className="text-base font-semibold text-yellow-400 mb-3">Design Drawings & Planning</h4>
-                <p className="text-gray-400 text-sm mb-4">Precision-driven planning for perfect execution.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-6">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />2D Layout Drawings (Home Theatre, Security, Automation)</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Electrical & Wiring Schematics</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Structural & Installation Planning</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Custom Room Design Concepts</li>
-                </ul>
-                <p className="text-blue-400 text-sm font-semibold">📊 Plan smart. Execute perfectly.</p>
-              </div>
-            </div>
-
-            {/* 3D Rendering */}
-            <div className="group bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/20 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all">
-              <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1616596969059-de6b7a5af37f?w=700&auto=format&fit=crop&q=60" alt="3D Rendering" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <span className="absolute bottom-3 left-4 text-2xl">🖥️</span>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-2">3D Rendering & Visualization</h3>
-                <h4 className="text-base font-semibold text-yellow-400 mb-3">Experience Your Project Before Execution</h4>
-                <p className="text-gray-400 text-sm mb-4">See your vision come to life with photorealistic renders.</p>
-                <ul className="text-sm text-gray-300 space-y-2 mb-6">
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Photorealistic 3D Interior Renders</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Home Theatre Visualization</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Lighting & Acoustic Simulation</li>
-                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />Client Presentation Designs</li>
-                </ul>
-                <p className="text-blue-400 text-sm font-semibold">✨ See it. Feel it. Approve it before execution.</p>
-              </div>
-            </div>
+            {services.filter(s => EXTENDED_SLUGS.includes(s.slug)).map(s => {
+              const cfg = ACCENT_CFG[s.accentColor ?? 'purple'] || ACCENT_CFG.purple;
+              return (
+                <div key={s._id} className={`group bg-gradient-to-br ${cfg.gradient} to-black border ${cfg.border} rounded-xl overflow-hidden ${cfg.hoverBorder} transition-all`}>
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={s.image || 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=700&auto=format&fit=crop&q=60'}
+                      alt={s.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-2xl">{s.emoji || '📐'}</span>
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold text-white mb-2">{s.name}</h3>
+                    {s.shortDescription && <h4 className="text-base font-semibold text-yellow-400 mb-3">{s.shortDescription}</h4>}
+                    <p className="text-gray-400 text-sm mb-4">{s.description}</p>
+                    {(s.features?.length ?? 0) > 0 && (
+                      <ul className="text-sm text-gray-300 space-y-2 mb-6">
+                        {s.features?.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />{f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Link to="/services" className="text-blue-400 text-sm font-semibold hover:text-blue-300 transition-colors">
+                      Learn More →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

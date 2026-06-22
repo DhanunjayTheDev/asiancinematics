@@ -15,7 +15,7 @@ const Navbar = () => {
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
   const solutionsRef = useRef<HTMLDivElement>(null);
-  const joinRef = useRef<HTMLDivElement>(null);
+  const joinRef = useRef<HTMLLIElement>(null);
   const { isAuthenticated, user } = useAuthStore();
   const items = useCartStore((s) => s.items);
   const cartCount = items.length;
@@ -39,6 +39,7 @@ const Navbar = () => {
     { to: '/solutions', label: 'SOLUTIONS' },
     { to: '/structural-works', label: 'STRUCTURAL WORKS' },
     { to: '/projects', label: 'PROJECTS' },
+    { to: '/vr-tours', label: '🥽 VR TOURS' },
     { to: '/services', label: 'SERVICES' },
     { to: '/brands', label: 'BRANDS' },
     { to: '/partner-network', label: 'PARTNER NETWORK' },
@@ -159,21 +160,6 @@ const Navbar = () => {
               )}
             </li>
 
-            {/* Login link */}
-            {!isAuthenticated && (
-              <li>
-                <NavLink
-                  to="/login"
-                  className={({ isActive }) =>
-                    `block px-3 py-3 text-[11px] font-semibold tracking-wider whitespace-nowrap transition-colors duration-200 border-b-2 ${
-                      isActive ? 'text-yellow-400 border-yellow-400' : 'text-gray-300 border-transparent hover:text-yellow-400 hover:border-yellow-400/50'
-                    }`
-                  }
-                >
-                  LOGIN
-                </NavLink>
-              </li>
-            )}
           </ul>
         </nav>
       </div>
@@ -212,17 +198,6 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
-
-            {/* Mobile Login link */}
-            {!isAuthenticated && (
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="py-2.5 text-xs font-semibold tracking-wider text-gray-300 hover:text-yellow-400 transition-colors border-b border-gray-800"
-              >
-                LOGIN
-              </Link>
-            )}
 
             <div className="mt-4 pt-3 border-t border-yellow-500/20">
               {isAuthenticated && user ? (

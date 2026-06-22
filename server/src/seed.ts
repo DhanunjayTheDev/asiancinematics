@@ -219,7 +219,7 @@ const seedDatabase = async () => {
       {
         name: 'Annual Maintenance Contract (AMC)',
         slug: 'annual-maintenance-contract',
-        description: 'Comprehensive annual maintenance contract covering all installed systems — AV, smart home, security, and networking.',
+        description: 'Comprehensive annual maintenance contract covering all installed systems AV, smart home, security, and networking.',
         shortDescription: 'Annual maintenance for all systems',
         price: 18000,
         sortOrder: 9,

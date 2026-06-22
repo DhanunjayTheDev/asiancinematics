@@ -8,7 +8,7 @@ import { createAuditLog } from '../services/auditService';
 
 const router = Router();
 
-// GET /api/v1/deals — public, active deals only
+// GET /api/v1/deals public, active deals only
 router.get(
   '/',
   asyncHandler(async (_req, res) => {
@@ -19,7 +19,7 @@ router.get(
   })
 );
 
-// GET /api/v1/deals/:id — public
+// GET /api/v1/deals/:id public
 router.get(
   '/:id',
   asyncHandler(async (req, res) => {
@@ -30,7 +30,7 @@ router.get(
   })
 );
 
-// POST /api/v1/deals — admin only
+// POST /api/v1/deals admin only
 router.post(
   '/',
   authenticate,
@@ -45,7 +45,7 @@ router.post(
   })
 );
 
-// PUT /api/v1/deals/:id — admin only
+// PUT /api/v1/deals/:id admin only
 router.put(
   '/:id',
   authenticate,
@@ -70,7 +70,7 @@ router.put(
   })
 );
 
-// DELETE /api/v1/deals/:id — admin soft delete
+// DELETE /api/v1/deals/:id admin soft delete
 router.delete(
   '/:id',
   authenticate,

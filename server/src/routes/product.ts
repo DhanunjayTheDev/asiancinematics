@@ -48,7 +48,7 @@ router.get(
       filter._id = { $in: deal && deal.products.length > 0 ? deal.products : [] };
     }
 
-    // Filter by deal type — collect products from all active deals of that type
+    // Filter by deal type collect products from all active deals of that type
     if (!dealId && dealType) {
       const typeDeals = await Deal.find({ type: dealType, isActive: true, isDeleted: false });
       const productIds = typeDeals.flatMap(d => d.products);

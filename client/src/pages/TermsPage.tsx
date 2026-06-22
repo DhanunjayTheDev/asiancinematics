@@ -235,7 +235,7 @@ const TermsPage = () => (
 
         {/* Support Footer */}
         <div className="mt-14 p-6 bg-yellow-400/5 border border-yellow-400/20 rounded-xl">
-          <p className="text-sm font-bold text-yellow-400 mb-3">Official Support — Asian Cinematics | Pravara World Tech</p>
+          <p className="text-sm font-bold text-yellow-400 mb-3">Official Support Asian Cinematics | Pravara World Tech</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             {SUPPORT_NUMBERS.map(n => (
               <a key={n} href={`tel:+91${n}`} className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-yellow-400 transition-colors">
@@ -248,7 +248,7 @@ const TermsPage = () => (
             <FaWhatsapp className="w-4 h-4" /> WhatsApp Support Available
           </a>
           <p className="text-xs text-gray-600 mt-4">
-            Professional AV | Home Theater | CCTV | Automation Solutions — Team Asian | Pravara
+            Professional AV | Home Theater | CCTV | Automation Solutions Team Asian | Pravara
           </p>
         </div>
 

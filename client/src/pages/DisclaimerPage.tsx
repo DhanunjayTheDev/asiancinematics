@@ -6,7 +6,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 const sections = [
   {
     title: '1. General Website Disclaimer',
-    body: `All information on this website is provided for general informational and commercial purposes only. While we strive to keep all content accurate and up to date, Asian Cinematics | Pravara World Tech makes no representations or warranties of any kind — express or implied — about the completeness, accuracy, reliability, suitability, or availability of the information, products, services, or related content on this site.`,
+    body: `All information on this website is provided for general informational and commercial purposes only. While we strive to keep all content accurate and up to date, Asian Cinematics | Pravara World Tech makes no representations or warranties of any kind express or implied about the completeness, accuracy, reliability, suitability, or availability of the information, products, services, or related content on this site.`,
   },
   {
     title: '2. Product Reference Disclaimer',
@@ -65,7 +65,7 @@ If you suspect unauthorized collection, report it immediately to our support tea
   },
   {
     title: '11. Limitation of Liability',
-    body: `To the fullest extent permitted by applicable law, Asian Cinematics | Pravara World Tech excludes all liability for loss or damage — direct or indirect — arising from:
+    body: `To the fullest extent permitted by applicable law, Asian Cinematics | Pravara World Tech excludes all liability for loss or damage direct or indirect arising from:
 
 • Use of this website or reliance on any information provided herein
 • Third-party product or service failures

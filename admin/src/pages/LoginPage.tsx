@@ -50,7 +50,7 @@ const LoginPage = () => {
       `}</style>
 
       <div className="min-h-screen w-full flex bg-[#060608]">
-        {/* Left panel — branding */}
+        {/* Left panel branding */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-12">
           {/* Background layers */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-[#060608] to-indigo-900/30" />
@@ -116,7 +116,7 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right panel — form */}
+        {/* Right panel form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative">
           <div className="absolute inset-0 bg-[#0a0a12] lg:bg-transparent" />
 

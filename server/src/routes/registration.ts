@@ -92,7 +92,7 @@ router.put(
 
       if (!existingUser) {
         // Use the password the user set during registration.
-        // Pass plain text — pre-save hook hashes it (no double-hash).
+        // Pass plain text pre-save hook hashes it (no double-hash).
         const plainPassword = reg.password || `PWT@${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const newUser = await User.create({
           name: reg.name,

@@ -31,12 +31,13 @@ import PartnerNetworkPage from './pages/PartnerNetworkPage';
 import ForumsPage from './pages/ForumsPage';
 import AboutPage from './pages/AboutPage';
 import JoinWithUsPage from './pages/JoinWithUsPage';
+import VRToursPage from './pages/VRToursPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import DisclaimerPage from './pages/DisclaimerPage';
 
-const AUTH_ROUTES = ['/login', '/register', '/join'];
+const AUTH_ROUTES = ['/login', '/register'];
 
 const App = () => {
   const location = useLocation();
@@ -77,6 +78,7 @@ const App = () => {
           <Route path="/solutions" element={<SolutionsPage />} />
           <Route path="/structural-works" element={<StructuralWorksPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/vr-tours" element={<VRToursPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/brands" element={<BrandsPage />} />
