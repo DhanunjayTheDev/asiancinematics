@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import Service from '../models/Service';
 import ServiceTicket from '../models/ServiceTicket';
+import { deleteFromCloudinary, extractPublicId } from '../utils/cloudinary';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess, sendPaginated } from '../utils/response';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { validate } from '../middleware/validate';
 import { authenticate, authorize } from '../middleware/auth';
-import { upload } from '../middleware/upload';
 import { createServiceSchema, createServiceTicketSchema, updateTicketStatusSchema, addTicketCommentSchema, assignTicketSchema } from '../validators/service';
 import { createAuditLog } from '../services/auditService';
 import { createNotification } from '../services/notificationService';
@@ -49,15 +49,14 @@ router.post(
   '/',
   authenticate,
   authorize('super_admin'),
-  upload.single('image'),
   validate(createServiceSchema),
   asyncHandler(async (req, res) => {
     const slug = slugify(req.body.name);
     const existing = await Service.findOne({ slug, isDeleted: false });
     if (existing) throw new BadRequestError('Service with this name already exists');
 
-    const image = req.file?.path;
-    const service = await Service.create({ ...req.body, slug, image });
+    // image is a Cloudinary URL sent in JSON body
+    const service = await Service.create({ ...req.body, slug });
     await createAuditLog(req, 'CREATE_SERVICE', 'Service', service._id.toString());
     sendSuccess(res, service, 'Service created', 201);
   })
@@ -68,11 +67,18 @@ router.put(
   '/:id',
   authenticate,
   authorize('super_admin'),
-  upload.single('image'),
   asyncHandler(async (req, res) => {
+    const existing = await Service.findById(req.params.id);
+    if (!existing) throw new NotFoundError('Service not found');
+
     const updateData = { ...req.body };
     if (req.body.name) updateData.slug = slugify(req.body.name);
-    if (req.file) updateData.image = req.file.path;
+
+    // if image changed, delete old one from Cloudinary
+    if (req.body.image !== undefined && existing.image && existing.image !== req.body.image) {
+      const pid = extractPublicId(existing.image);
+      if (pid) await deleteFromCloudinary(pid).catch(() => {});
+    }
 
     const service = await Service.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!service) throw new NotFoundError('Service not found');
@@ -89,6 +95,13 @@ router.delete(
   asyncHandler(async (req, res) => {
     const service = await Service.findByIdAndUpdate(req.params.id, { isDeleted: true });
     if (!service) throw new NotFoundError('Service not found');
+
+    // delete image from Cloudinary
+    if (service.image) {
+      const pid = extractPublicId(service.image);
+      if (pid) await deleteFromCloudinary(pid).catch(() => {});
+    }
+
     await createAuditLog(req, 'DELETE_SERVICE', 'Service', req.params.id);
     sendSuccess(res, null, 'Service deleted');
   })

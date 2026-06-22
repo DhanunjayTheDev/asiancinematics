@@ -3,9 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { HiOutlineCog, HiOutlineCurrencyRupee, HiOutlinePhotograph, HiOutlineX } from 'react-icons/hi';
 import api from '../lib/api';
+import { uploadToCloudinary } from '../lib/cloudinary';
 import Loading from '../components/Loading';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
+import CustomSelect from '../components/CustomSelect';
 
 const ACCENT_COLORS = ['blue', 'cyan', 'orange', 'purple', 'yellow', 'amber', 'green', 'red'] as const;
 type AccentColor = typeof ACCENT_COLORS[number];
@@ -96,33 +98,40 @@ const ServicesPage = () => {
     }
     setSaving(true);
     try {
-      const fd = new FormData();
-      fd.append('name', form.name);
-      fd.append('description', form.description);
-      if (form.shortDescription) fd.append('shortDescription', form.shortDescription);
-      if (form.price) fd.append('price', form.price);
-      fd.append('sortOrder', form.sortOrder);
-      fd.append('isActive', String(form.isActive));
-      fd.append('emoji', form.emoji);
-      fd.append('badge', form.badge);
-      fd.append('accentColor', form.accentColor);
+      let imageUrl = imagePreview; // existing URL if no new file
+      if (imageFile) {
+        toast.loading('Uploading image...', { id: 'svc-img' });
+        imageUrl = await uploadToCloudinary(imageFile);
+        toast.dismiss('svc-img');
+      }
 
       const featuresArr = form.features.split('\n').map(f => f.trim()).filter(Boolean);
-      featuresArr.forEach((f) => fd.append('features', f));
-
-      if (imageFile) fd.append('image', imageFile);
+      const body: any = {
+        name: form.name,
+        description: form.description,
+        sortOrder: Number(form.sortOrder),
+        isActive: form.isActive,
+        emoji: form.emoji,
+        badge: form.badge,
+        accentColor: form.accentColor,
+        features: featuresArr,
+      };
+      if (form.shortDescription) body.shortDescription = form.shortDescription;
+      if (form.price) body.price = Number(form.price);
+      if (imageUrl) body.image = imageUrl;
 
       if (editing) {
-        await api.put(`/services/${editing._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.put(`/services/${editing._id}`, body);
         toast.success('Service updated');
       } else {
-        await api.post('/services', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.post('/services', body);
         toast.success('Service created');
       }
       setModalOpen(false);
       fetchServices();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to save');
+      toast.dismiss('svc-img');
+      toast.error(err.response?.data?.message || err.message || 'Failed to save');
     } finally {
       setSaving(false);
     }
@@ -248,10 +257,11 @@ const ServicesPage = () => {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Accent Color</label>
-              <select value={form.accentColor} onChange={(e) => setForm({ ...form, accentColor: e.target.value as AccentColor })}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                {ACCENT_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <CustomSelect
+                value={form.accentColor}
+                onChange={(v) => setForm({ ...form, accentColor: v as AccentColor })}
+                options={ACCENT_COLORS.map(c => ({ value: c, label: c }))}
+              />
             </div>
           </div>
 

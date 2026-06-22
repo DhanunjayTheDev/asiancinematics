@@ -1,27 +1,61 @@
-import { useState } from 'react';
-import { HiOutlineX } from 'react-icons/hi';
+import { useEffect } from 'react';
+import { FiX } from 'react-icons/fi';
 
 interface ModalProps {
   open?: boolean;
   isOpen?: boolean;
   onClose: () => void;
   title: string;
+  subtitle?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
 }
 
-const Modal = ({ open, isOpen, onClose, title, children }: ModalProps) => {
-  if (!(open || isOpen)) return null;
+const sizeMap = {
+  sm: 'max-w-sm',
+  md: 'max-w-lg',
+  lg: 'max-w-2xl',
+  xl: 'max-w-3xl',
+};
+
+const Modal = ({ open, isOpen, onClose, title, subtitle, size = 'md', children }: ModalProps) => {
+  const visible = open || isOpen;
+
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [visible, onClose]);
+
+  if (!visible) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-gray-900 rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] z-10 border border-blue-500/20 flex flex-col overflow-visible">
-        <div className="flex items-center justify-between p-5 border-b border-blue-500/20 flex-shrink-0 relative z-0">
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-blue-400 transition">
-            <HiOutlineX className="w-5 h-5" />
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-gray-950/95" onClick={onClose} />
+
+      {/* Panel */}
+      <div className={`relative bg-gray-900 rounded-2xl shadow-2xl w-full ${sizeMap[size]} z-10 border border-blue-500/20 overflow-hidden max-h-[90vh] flex flex-col`}>
+
+        {/* Header */}
+        <div className="flex items-start justify-between p-6 border-b border-gray-800 flex-shrink-0">
+          <div>
+            <h3 className="text-lg font-bold text-white">{title}</h3>
+            {subtitle && <p className="text-sm text-gray-400 mt-0.5">{subtitle}</p>}
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors flex-shrink-0 ml-4"
+          >
+            <FiX className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-5 overflow-y-auto overscroll-contain flex-1" style={{ overflow: 'visible' }}>{children}</div>
+
+        {/* Body */}
+        <div className="p-6 overflow-y-auto flex-1">
+          {children}
+        </div>
       </div>
     </div>
   );

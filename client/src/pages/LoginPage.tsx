@@ -189,7 +189,7 @@ const LoginPage = () => {
               </p>
               <p className="text-xs text-gray-600">
                 Staff / Admin?{' '}
-                <a href={`${import.meta.env.VITE_ADMIN_URL || 'https://admin.pravaraworld.com'}/login`} className="text-gray-400 hover:text-white transition-colors">Use Admin Panel →</a>
+                <a href={`${import.meta.env.VITE_ADMIN_URL}/login`} className="text-gray-400 hover:text-white transition-colors">Use Admin Panel →</a>
               </p>
             </div>
           </div>

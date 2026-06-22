@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import Loading from '../components/Loading';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
+import CustomSelect from '../components/CustomSelect';
 
 const CATEGORIES = ['Home Theatre & AV', 'Smart Home & Automation', 'Security & Surveillance', 'Acoustic & Decoratives', 'Networking', 'Lighting', 'Tensile & Structural'];
 const TIERS = ['Premium', 'Enterprise', 'Professional', 'Consumer'];
@@ -142,18 +143,19 @@ const BrandsPage = () => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Category</label>
-              <select value={form.category} onChange={(e) => setForm((f) => ({...f, category: e.target.value}))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                <option value="">Select...</option>
-                {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-              </select>
+              <CustomSelect
+                value={form.category}
+                onChange={(v) => setForm((f) => ({ ...f, category: String(v) }))}
+                options={[{ value: '', label: 'Select...' }, ...CATEGORIES.map((c) => ({ value: c, label: c }))]}
+              />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Tier</label>
-              <select value={form.tier} onChange={(e) => setForm((f) => ({...f, tier: e.target.value}))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                {TIERS.map((t) => <option key={t}>{t}</option>)}
-              </select>
+              <CustomSelect
+                value={form.tier}
+                onChange={(v) => setForm((f) => ({ ...f, tier: String(v) }))}
+                options={TIERS.map((t) => ({ value: t, label: t }))}
+              />
             </div>
           </div>
           <label className="flex items-center gap-2 cursor-pointer">

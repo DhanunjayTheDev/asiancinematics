@@ -21,6 +21,7 @@ import UsersPage from './pages/UsersPage';
 import ReportsPage from './pages/ReportsPage';
 import RegistrationsPage from './pages/RegistrationsPage';
 import DealsPage from './pages/DealsPage';
+import ProductFormPage from './pages/ProductFormPage';
 
 const App = () => {
   const { isAuthenticated, fetchProfile } = useAuthStore();
@@ -39,6 +40,8 @@ const App = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/new" element={<ProductFormPage />} />
+          <Route path="/products/:id/edit" element={<ProductFormPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/projects" element={<ProjectsPage />} />

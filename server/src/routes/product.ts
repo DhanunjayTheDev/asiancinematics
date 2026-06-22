@@ -6,10 +6,10 @@ import { sendSuccess, sendPaginated } from '../utils/response';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { validate } from '../middleware/validate';
 import { authenticate, authorize } from '../middleware/auth';
-import { upload } from '../middleware/upload';
 import { createProductSchema, updateProductSchema } from '../validators/product';
 import { createAuditLog } from '../services/auditService';
 import { cacheGet, cacheSet, cacheDelPattern } from '../config/redis';
+import { deleteFromCloudinary, extractPublicId } from '../utils/cloudinary';
 
 const router = Router();
 
@@ -97,14 +97,14 @@ router.post(
   '/',
   authenticate,
   authorize('super_admin'),
-  upload.array('images', 5),
   validate(createProductSchema),
   asyncHandler(async (req, res) => {
     const slug = slugify(req.body.name);
     const existing = await Product.findOne({ slug, isDeleted: false });
     if (existing) throw new BadRequestError('Product with this name already exists');
 
-    const images = (req.files as Express.Multer.File[])?.map((f) => f.path) || [];
+    // images come as array of Cloudinary URLs in JSON body
+    const images = Array.isArray(req.body.images) ? req.body.images : (req.body.images ? [req.body.images] : []);
     const product = await Product.create({ ...req.body, slug, images });
 
     await cacheDelPattern('products:*');
@@ -118,18 +118,25 @@ router.put(
   '/:id',
   authenticate,
   authorize('super_admin'),
-  upload.array('images', 5),
   validate(updateProductSchema),
   asyncHandler(async (req, res) => {
-    const updateData = { ...req.body };
-    if (req.body.name) {
-      updateData.slug = slugify(req.body.name);
-    }
+    const existing = await Product.findById(req.params.id);
+    if (!existing) throw new NotFoundError('Product not found');
 
-    const newImages = (req.files as Express.Multer.File[])?.map((f) => f.path);
-    if (newImages?.length) {
-      const existing = await Product.findById(req.params.id);
-      updateData.images = [...(existing?.images || []), ...newImages];
+    const updateData = { ...req.body };
+    if (req.body.name) updateData.slug = slugify(req.body.name);
+
+    // images come as array of Cloudinary URLs in JSON body
+    if (req.body.images !== undefined) {
+      const newImages: string[] = Array.isArray(req.body.images) ? req.body.images : (req.body.images ? [req.body.images] : []);
+      updateData.images = newImages;
+
+      // delete removed images from Cloudinary
+      const removed = (existing.images || []).filter(url => !newImages.includes(url));
+      await Promise.all(removed.map(async (url) => {
+        const pid = extractPublicId(url);
+        if (pid) await deleteFromCloudinary(pid).catch(() => {});
+      }));
     }
 
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
@@ -149,6 +156,12 @@ router.delete(
   asyncHandler(async (req, res) => {
     const product = await Product.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
     if (!product) throw new NotFoundError('Product not found');
+
+    // delete all images from Cloudinary
+    await Promise.all((product.images || []).map(async (url) => {
+      const pid = extractPublicId(url);
+      if (pid) await deleteFromCloudinary(pid).catch(() => {});
+    }));
 
     await cacheDelPattern('products:*');
     await createAuditLog(req, 'DELETE_PRODUCT', 'Product', req.params.id);

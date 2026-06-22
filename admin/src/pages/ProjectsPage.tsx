@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { FiMapPin, FiCalendar, FiStar } from 'react-icons/fi';
 import Loading from '../components/Loading';
 import Modal from '../components/Modal';
+import CustomSelect from '../components/CustomSelect';
 import Button from '../components/Button';
 
 const CATEGORIES = ['Home Theatre', 'Stretch Ceiling', 'Epoxy Flooring', 'Smart Home', 'CCTV & Security', 'Tensile Structure', 'Lighting', 'Other'];
@@ -112,11 +113,11 @@ const ProjectsPage = () => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Category</label>
-              <select value={form.category} onChange={(e) => setForm((f) => ({...f, category: e.target.value}))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                <option value="">Select...</option>
-                {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-              </select>
+              <CustomSelect
+                value={form.category}
+                onChange={(v) => setForm((f) => ({ ...f, category: String(v) }))}
+                options={[{ value: '', label: 'Select...' }, ...CATEGORIES.map((c) => ({ value: c, label: c }))]}
+              />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">Location</label>

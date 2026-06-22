@@ -52,6 +52,19 @@ export const uploadToCloudinary = async (
 };
 
 /**
+ * Extract Cloudinary public_id from a secure_url
+ * e.g. https://res.cloudinary.com/xxx/image/upload/v123/pravara_world/file.webp → pravara_world/file
+ */
+export const extractPublicId = (url: string): string | null => {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Delete a file from Cloudinary
  * @param publicId - The public ID of the file
  */
