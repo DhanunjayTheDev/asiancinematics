@@ -144,7 +144,7 @@ const Navbar = () => {
                 JOIN WITH US <FiChevronDown className={`w-3 h-3 transition-transform ${joinOpen ? 'rotate-180' : ''}`} />
               </button>
               {joinOpen && (
-                <div className="absolute top-full left-0 mt-0 w-64 bg-black border border-yellow-500/20 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute top-full right-0 mt-0 w-64 bg-black border border-yellow-500/20 rounded-xl shadow-2xl z-50 overflow-hidden">
                   {joinSubLinks.map((sub) => (
                     <Link
                       key={sub.to}

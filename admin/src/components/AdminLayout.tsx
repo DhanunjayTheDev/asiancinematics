@@ -22,6 +22,7 @@ import {
   HiOutlineSearch,
   HiOutlineTicket,
   HiOutlineGift,
+  HiOutlineDocumentText,
 } from 'react-icons/hi';
 
 const NAV_SECTIONS = [
@@ -30,6 +31,7 @@ const NAV_SECTIONS = [
     items: [
       { to: '/dashboard', label: 'Dashboard', icon: HiOutlineViewGrid, roles: ['super_admin', 'support', 'employee'] },
       { to: '/reports', label: 'Reports', icon: HiOutlineChartBar, roles: ['super_admin'] },
+      { to: '/invoices', label: 'Invoices', icon: HiOutlineDocumentText, roles: ['super_admin', 'employee'] },
     ],
   },
   {

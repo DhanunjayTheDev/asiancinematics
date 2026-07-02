@@ -35,6 +35,7 @@ import notificationRoutes from './routes/notification';
 import adminRoutes from './routes/admin';
 import registrationRoutes from './routes/registration';
 import dealRoutes from './routes/deal';
+import invoiceRoutes from './routes/invoice';
 
 const app = express();
 const server = http.createServer(app);
@@ -123,6 +124,7 @@ app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/registrations', registrationRoutes);
 app.use('/api/v1/deals', dealRoutes);
+app.use('/api/v1/invoices', invoiceRoutes);
 
 // Error handling
 app.use(notFoundHandler);

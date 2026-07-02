@@ -78,7 +78,7 @@ const ProductDetailPage = () => {
               <div className="aspect-square bg-gray-800 rounded-xl overflow-hidden mb-6 border border-blue-500/20">
                 {product.images[selectedImage] ? (
                   <img
-                    src={`/uploads/${product.images[selectedImage]}`}
+                    src={product.images[selectedImage]}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
@@ -96,7 +96,7 @@ const ProductDetailPage = () => {
                       onClick={() => setSelectedImage(i)}
                       className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === i ? 'border-blue-400' : 'border-blue-500/30'}`}
                     >
-                      <img src={`/uploads/${img}`} alt="" className="w-full h-full object-cover" />
+                      <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>

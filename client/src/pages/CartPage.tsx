@@ -82,7 +82,7 @@ const CartPage = () => {
                   <div key={item.product._id} className="cart-item-animate bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-lg p-5 flex items-start space-x-4 hover:border-blue-500/40 transition">
                     <div className="w-20 h-20 bg-black/40 rounded-lg overflow-hidden shrink-0 border border-blue-500/20">
                       {item.product.images[0] ? (
-                        <img src={`/uploads/${item.product.images[0]}`} alt={item.product.name} className="w-full h-full object-cover" />
+                        <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">No Image</div>
                       )}

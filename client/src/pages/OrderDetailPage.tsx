@@ -86,7 +86,7 @@ const OrderDetailPage = () => {
               {order.items.map((item, i) => (
                 <div key={i} className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-black/40 rounded-lg overflow-hidden border border-blue-500/20">
-                    {item.image && <img src={`/uploads/${item.image}`} alt={item.name} className="w-full h-full object-cover" />}
+                    {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-white">{item.name}</p>

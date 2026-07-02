@@ -67,7 +67,7 @@ const ServiceDetailPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {service.image && (
             <div className="aspect-video bg-gray-800 rounded-xl overflow-hidden mb-8 border border-blue-500/20">
-              <img src={`/uploads/${service.image}`} alt={service.name} className="w-full h-full object-cover" />
+              <img src={service.image} alt={service.name} className="w-full h-full object-cover" />
             </div>
           )}
 
