@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import Order from '../models/Order';
 import Product from '../models/Product';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess, sendPaginated } from '../utils/response';
-import { NotFoundError, BadRequestError } from '../utils/errors';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../utils/errors';
 import { validate } from '../middleware/validate';
 import { authenticate, authorize } from '../middleware/auth';
 import { createOrderSchema, updateOrderStatusSchema, assignOrderSchema } from '../validators/order';
@@ -13,6 +14,8 @@ import { createAuditLog } from '../services/auditService';
 import { createNotification } from '../services/notificationService';
 import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from '../services/emailService';
 import User from '../models/User';
+import config from '../config';
+import { razorpay } from '../utils/razorpay';
 
 const router = Router();
 
@@ -189,7 +192,7 @@ router.put(
     // Production-grade status transition validation
     const allowedTransitions: Record<string, string[]> = {
       pending:         ['confirmed', 'processing', 'cancelled'],
-      payment_pending: ['pending', 'cancelled'],
+      payment_pending: ['confirmed', 'cancelled'],
       confirmed:       ['processing', 'cancelled'],
       processing:      ['shipped', 'cancelled'],
       shipped:         ['delivered'],
@@ -244,7 +247,7 @@ router.put(
     const order = await Order.findOne({ _id: req.params.id, user: req.user!._id, isDeleted: false });
     if (!order) throw new NotFoundError('Order not found');
 
-    if (!['pending', 'confirmed'].includes(order.status)) {
+    if (!['pending', 'payment_pending', 'confirmed'].includes(order.status)) {
       throw new BadRequestError('Can only cancel pending or confirmed orders');
     }
 
@@ -261,57 +264,85 @@ router.put(
   })
 );
 
-// PUT /api/v1/orders/:id/payment (customer: submit payment proof)
-router.put(
-  '/:id/payment',
+// POST /api/v1/orders/:id/create-razorpay-order (customer: create Razorpay order for payment)
+router.post(
+  '/:id/create-razorpay-order',
   authenticate,
   asyncHandler(async (req, res) => {
-    const { utrNumber, paymentScreenshot } = req.body;
     const order = await Order.findOne({ _id: req.params.id, user: req.user!._id, isDeleted: false });
     if (!order) throw new NotFoundError('Order not found');
 
     if (order.status !== 'payment_pending') {
-      throw new BadRequestError('This order is not awaiting payment details');
+      throw new BadRequestError('This order is not awaiting payment');
     }
 
-    if (!utrNumber || !paymentScreenshot) {
-      throw new BadRequestError('UTR number and payment screenshot are required');
+    const amount = Math.round(order.totalAmount * 100); // paise
+    if (amount < 100) {
+      throw new BadRequestError('Amount must be at least ₹1');
     }
 
-    order.utrNumber = utrNumber;
-    order.paymentScreenshot = paymentScreenshot;
-    order.status = 'pending'; // Move to pending approval
+    if (!config.payment.razorpay.keyId || !config.payment.razorpay.keySecret) {
+      throw new UnauthorizedError('Payment gateway is not configured');
+    }
+
+    let razorpayOrder;
+    try {
+      razorpayOrder = await razorpay.orders.create({
+        amount,
+        currency: 'INR',
+        receipt: order.orderNumber,
+        notes: { orderId: order._id.toString() },
+      });
+    } catch (err) {
+      throw new BadRequestError('Failed to create Razorpay order');
+    }
+
+    order.razorpayOrderId = razorpayOrder.id;
     await order.save();
 
-    await createNotification(
-      req.user!._id,
-      'Payment Submitted',
-      `Payment details for order ${order.orderNumber} have been submitted. Awaiting admin verification.`,
-      'order',
-      'in_app',
-      'Order',
-      order._id.toString()
-    );
-
-    sendSuccess(res, order, 'Payment details submitted successfully. Awaiting admin approval.');
+    sendSuccess(res, {
+      order_id: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      key: config.payment.razorpay.keyId,
+    });
   })
 );
 
-// PUT /api/v1/orders/:id/approve (admin: approve pending order)
-router.put(
-  '/:id/approve',
+// POST /api/v1/orders/:id/verify-payment (customer: verify Razorpay payment signature)
+router.post(
+  '/:id/verify-payment',
   authenticate,
-  authorize('super_admin', 'employee'),
   asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
-    if (!order || order.isDeleted) throw new NotFoundError('Order not found');
-
-    if (order.status !== 'pending' && order.status !== 'payment_pending') {
-      throw new BadRequestError('Only pending orders can be approved');
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      throw new BadRequestError('Missing payment verification fields');
     }
 
-    order.status = 'confirmed';
+    const order = await Order.findOne({ _id: req.params.id, user: req.user!._id, isDeleted: false });
+    if (!order) throw new NotFoundError('Order not found');
+
+    if (order.razorpayOrderId !== razorpay_order_id) {
+      throw new BadRequestError('Order mismatch');
+    }
+
+    const expectedSignature = crypto
+      .createHmac('sha256', config.payment.razorpay.keySecret)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+    const expectedBuf = Buffer.from(expectedSignature, 'hex');
+    const receivedBuf = Buffer.from(String(razorpay_signature), 'hex');
+    const isValid =
+      expectedBuf.length === receivedBuf.length && crypto.timingSafeEqual(expectedBuf, receivedBuf);
+
+    if (!isValid) {
+      throw new BadRequestError('Payment signature verification failed');
+    }
+
+    order.paymentId = razorpay_payment_id;
     order.paymentStatus = 'paid';
+    order.status = 'confirmed';
     await order.save();
 
     const user = await User.findById(order.user);
@@ -320,60 +351,17 @@ router.put(
     }
 
     await createNotification(
-      order.user.toString(),
-      'Order Confirmed',
-      `Your order ${order.orderNumber} has been confirmed and is being processed.`,
+      req.user!._id,
+      'Payment Successful',
+      `Payment for order ${order.orderNumber} was received. Your order is confirmed.`,
       'order',
       'in_app',
       'Order',
       order._id.toString()
     );
 
-    await createAuditLog(req, 'APPROVE_ORDER', 'Order', req.params.id, {});
-    sendSuccess(res, order, 'Order approved successfully');
-  })
-);
-
-// PUT /api/v1/orders/:id/reject (admin: reject pending order)
-router.put(
-  '/:id/reject',
-  authenticate,
-  authorize('super_admin', 'employee'),
-  asyncHandler(async (req, res) => {
-    const { reason } = req.body;
-    const order = await Order.findById(req.params.id);
-    if (!order || order.isDeleted) throw new NotFoundError('Order not found');
-
-    if (order.status !== 'pending' && order.status !== 'payment_pending') {
-      throw new BadRequestError('Only pending orders can be rejected');
-    }
-
-    // Restore stock
-    for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
-    }
-
-    order.status = 'cancelled';
-    order.cancelReason = reason || 'Rejected by admin';
-    await order.save();
-
-    const user = await User.findById(order.user);
-    if (user) {
-      await sendStatusUpdateEmail(user.email, 'Order', order.orderNumber, 'cancelled');
-    }
-
-    await createNotification(
-      order.user.toString(),
-      'Order Rejected',
-      `Your order ${order.orderNumber} has been rejected. Reason: ${order.cancelReason}`,
-      'order',
-      'in_app',
-      'Order',
-      order._id.toString()
-    );
-
-    await createAuditLog(req, 'REJECT_ORDER', 'Order', req.params.id, { reason });
-    sendSuccess(res, order, 'Order rejected');
+    await createAuditLog(req, 'VERIFY_PAYMENT', 'Order', req.params.id, { razorpay_payment_id });
+    sendSuccess(res, order, 'Payment verified successfully');
   })
 );
 

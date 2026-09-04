@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
-import { FiCheck, FiX, FiImage } from 'react-icons/fi';
 import api from '../lib/api';
 import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
@@ -36,9 +35,7 @@ const OrdersPage = () => {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<any>(null);
   const [newStatus, setNewStatus] = useState('');
-  const [rejectReason, setRejectReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
-  const [showScreenshot, setShowScreenshot] = useState(false);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -78,41 +75,6 @@ const OrdersPage = () => {
       setActionLoading(false);
     }
   };
-
-  const handleApprove = async () => {
-    if (!selected) return;
-    setActionLoading(true);
-    try {
-      await api.put(`/orders/${selected._id}/approve`);
-      toast.success('Order approved & confirmed!');
-      setSelected(null);
-      fetchOrders();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to approve');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selected) return;
-    if (!rejectReason.trim()) return toast.error('Enter a reject reason');
-    setActionLoading(true);
-    try {
-      await api.put(`/orders/${selected._id}/reject`, { reason: rejectReason });
-      toast.success('Order rejected');
-      setSelected(null);
-      setRejectReason('');
-      fetchOrders();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to reject');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const needsPaymentVerification = (o: any) =>
-    o.paymentMethod === 'online' && o.status === 'pending' && o.utrNumber;
 
   return (
     <>
@@ -155,16 +117,9 @@ const OrdersPage = () => {
                 </thead>
                 <tbody className="divide-y divide-blue-500/10">
                   {orders.map(o => (
-                    <tr key={o._id} className={`hover:bg-blue-500/5 transition-colors ${needsPaymentVerification(o) ? 'bg-orange-500/5' : ''}`}>
+                    <tr key={o._id} className="hover:bg-blue-500/5 transition-colors">
                       <td className="px-5 py-3">
-                        <div>
-                          <p className="font-medium text-white">{o.orderNumber}</p>
-                          {needsPaymentVerification(o) && (
-                            <span className="text-[10px] font-bold text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded">
-                              ⚡ Verify Payment
-                            </span>
-                          )}
-                        </div>
+                        <p className="font-medium text-white">{o.orderNumber}</p>
                       </td>
                       <td className="px-5 py-3 text-gray-300">{o.user?.name || 'N/A'}</td>
                       <td className="px-5 py-3 text-gray-300">{o.items?.length || 0}</td>
@@ -185,10 +140,10 @@ const OrdersPage = () => {
                       <td className="px-5 py-3 text-gray-400 text-xs">{new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
                       <td className="px-5 py-3">
                         <button
-                          onClick={() => { setSelected(o); setNewStatus(o.status); setRejectReason(''); setShowScreenshot(false); }}
-                          className={`text-sm font-medium transition ${needsPaymentVerification(o) ? 'text-orange-400 hover:text-orange-300' : 'text-blue-400 hover:text-blue-300'}`}
+                          onClick={() => { setSelected(o); setNewStatus(o.status); }}
+                          className="text-sm font-medium text-blue-400 hover:text-blue-300 transition"
                         >
-                          {needsPaymentVerification(o) ? 'Review' : 'Manage'}
+                          Manage
                         </button>
                       </td>
                     </tr>
@@ -268,67 +223,16 @@ const OrdersPage = () => {
                 </div>
               </div>
 
-              {/* Payment Proof (online orders) */}
-              {selected.paymentMethod === 'online' && (selected.utrNumber || selected.paymentScreenshot) && (
-                <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 space-y-3">
-                  <p className="text-xs text-orange-400 font-semibold uppercase tracking-wider">Payment Proof</p>
-                  {selected.utrNumber && (
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">UTR / Reference Number</p>
-                      <p className="font-mono text-white font-semibold text-sm bg-black/40 px-3 py-2 rounded-lg">{selected.utrNumber}</p>
-                    </div>
-                  )}
-                  {selected.paymentScreenshot && (
-                    <div>
-                      <button
-                        onClick={() => setShowScreenshot(p => !p)}
-                        className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium transition"
-                      >
-                        <FiImage className="w-4 h-4" />
-                        {showScreenshot ? 'Hide Screenshot' : 'View Screenshot'}
-                      </button>
-                      {showScreenshot && (
-                        <img src={selected.paymentScreenshot} alt="Payment Screenshot"
-                          className="mt-3 w-full rounded-xl object-contain max-h-64" />
-                      )}
-                    </div>
-                  )}
+              {selected.paymentMethod === 'online' && selected.paymentId && (
+                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                  <p className="text-xs text-green-400 font-semibold uppercase tracking-wider mb-1">Razorpay Payment ID</p>
+                  <p className="font-mono text-white font-semibold text-sm bg-black/40 px-3 py-2 rounded-lg">{selected.paymentId}</p>
                 </div>
               )}
             </div>
 
             {/* Footer */}
             <div className="p-6 border-t border-gray-800 bg-gray-900 flex-shrink-0 space-y-4">
-              {/* Approve / Reject for pending online payments */}
-              {needsPaymentVerification(selected) && (
-                <div className="space-y-3">
-                  <p className="text-xs text-orange-400 font-semibold uppercase tracking-wider">Verify Payment</p>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleApprove}
-                      disabled={actionLoading}
-                      className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl transition"
-                    >
-                      <FiCheck className="w-4 h-4" />
-                      Approve
-                    </button>
-                  </div>
-                  <div className="flex gap-2">
-                    <input type="text" placeholder="Reject reason..."
-                      value={rejectReason} onChange={e => setRejectReason(e.target.value)}
-                      className="flex-1 bg-black/40 border border-gray-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 transition" />
-                    <button
-                      onClick={handleReject}
-                      disabled={actionLoading || !rejectReason.trim()}
-                      className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600/40 border border-red-600/40 disabled:opacity-50 text-red-400 font-semibold px-4 py-2 rounded-xl transition text-sm"
-                    >
-                      <FiX className="w-4 h-4" />
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              )}
-
               {/* Standard Status Update */}
               <div>
                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Update Status</label>

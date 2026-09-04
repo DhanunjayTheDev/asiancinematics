@@ -5,9 +5,9 @@ A full-stack enterprise SaaS platform built with the MERN stack (MongoDB, Expres
 ## Architecture
 
 ```
-├── server/      # Express.js API (port 5000)
-├── client/      # Customer-facing React app (port 3000)
-├── admin/       # Admin dashboard React app (port 3001)
+├── server/      # Express.js API (port 4000)
+├── client/      # Customer-facing React app (port 5173)
+├── admin/       # Admin dashboard React app (port 5174)
 ```
 
 ## Tech Stack

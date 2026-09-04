@@ -10,14 +10,14 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3001,
+    port: 5174,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:4000',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:4000',
         changeOrigin: true,
       },
     },

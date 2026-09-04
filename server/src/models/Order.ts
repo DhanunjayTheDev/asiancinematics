@@ -30,8 +30,7 @@ export interface IOrder extends Document {
   paymentMethod: 'COD' | 'online';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentId?: string;
-  utrNumber?: string;
-  paymentScreenshot?: string;
+  razorpayOrderId?: string;
   assignedTo?: mongoose.Types.ObjectId;
   notes?: string;
   cancelReason?: string;
@@ -86,8 +85,7 @@ const orderSchema = new Schema<IOrder>(
       index: true,
     },
     paymentId: { type: String },
-    utrNumber: { type: String },
-    paymentScreenshot: { type: String },
+    razorpayOrderId: { type: String },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'User' },
     notes: { type: String },
     cancelReason: { type: String },

@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { FiMapPin, FiPlus, FiCheck, FiUpload, FiX } from 'react-icons/fi';
+import { FiMapPin, FiPlus, FiCheck } from 'react-icons/fi';
 import api from '../lib/api';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import type { Address } from '../types';
 import Loading from '../components/Loading';
-import qrImage from '../assets/qr.jpeg';
+
+const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID as string;
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { items, getTotal, clearCart } = useCartStore();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>('');
@@ -29,13 +30,10 @@ const CheckoutPage = () => {
     city: '', state: '', pincode: '',
   });
 
-  // Payment step (online)
+  // Payment step (online, shown as fallback if the Razorpay modal is dismissed or fails)
   const [paymentStep, setPaymentStep] = useState<'checkout' | 'payment'>('checkout');
   const [orderId, setOrderId] = useState('');
-  const [utrNumber, setUtrNumber] = useState('');
-  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
-  const [screenshotPreview, setScreenshotPreview] = useState('');
-  const [submittingPayment, setSubmittingPayment] = useState(false);
+  const [payingNow, setPayingNow] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const subtotal = getTotal();
@@ -101,7 +99,7 @@ const CheckoutPage = () => {
       setOrderId(data.data._id);
 
       if (paymentMethod === 'online') {
-        setPaymentStep('payment');
+        await openRazorpayCheckout(data.data._id);
       } else {
         clearCart();
         toast.success('Order placed successfully!');
@@ -114,38 +112,56 @@ const CheckoutPage = () => {
     }
   };
 
-  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return toast.error('Image must be under 5MB');
-    setScreenshotFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setScreenshotPreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmitPayment = async () => {
-    if (!utrNumber) return toast.error('Enter UTR / reference number');
-    if (!screenshotFile) return toast.error('Upload payment screenshot');
-
-    setSubmittingPayment(true);
+  const openRazorpayCheckout = async (id: string) => {
+    setPayingNow(true);
     try {
-      await api.put(`/orders/${orderId}/payment`, {
-        utrNumber,
-        paymentScreenshot: screenshotPreview,
+      const { data } = await api.post(`/orders/${id}/create-razorpay-order`);
+      const { order_id, amount, currency, key } = data.data;
+
+      const razorpay = new window.Razorpay({
+        key: key || RAZORPAY_KEY_ID,
+        amount,
+        currency,
+        name: 'Pravara World Tech',
+        description: 'Order Payment',
+        order_id,
+        prefill: { name: user?.name, email: user?.email, contact: user?.phone },
+        theme: { color: '#eab308' },
+        handler: async (response) => {
+          try {
+            await api.post(`/orders/${id}/verify-payment`, response);
+            clearCart();
+            setShowSuccessPopup(true);
+          } catch (err: any) {
+            toast.error(err.response?.data?.message || 'Payment verification failed');
+            setPaymentStep('payment');
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast('Payment cancelled', { icon: 'ℹ️' });
+            setPaymentStep('payment');
+          },
+        },
       });
-      clearCart();
-      setShowSuccessPopup(true);
+
+      razorpay.on('payment.failed', (response) => {
+        toast.error(response.error.description || 'Payment failed');
+        setPaymentStep('payment');
+      });
+
+      razorpay.open();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to submit payment');
+      toast.error(err.response?.data?.message || 'Failed to start payment');
+      setPaymentStep('payment');
     } finally {
-      setSubmittingPayment(false);
+      setPayingNow(false);
     }
   };
 
   if (pageLoading) return <Loading />;
 
-  // ─── PAYMENT STEP ──────────────────────────────────────────────────────────
+  // ─── PAYMENT STEP (fallback after modal is dismissed/fails) ───────────────
   if (paymentStep === 'payment') {
     return (
       <>
@@ -155,83 +171,24 @@ const CheckoutPage = () => {
           <div className="max-w-2xl mx-auto space-y-6">
             <div>
               <h1 className="text-2xl font-bold text-white">Complete Payment</h1>
-              <p className="text-gray-400 mt-1">Scan the QR code and pay <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span></p>
+              <p className="text-gray-400 mt-1">Your order is placed. Complete payment of <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span> to confirm it.</p>
             </div>
 
-            {/* QR Card */}
-            <div className="bg-gray-900 border border-blue-500/20 rounded-2xl p-8 text-center">
-              <h2 className="text-white font-semibold text-lg mb-6">Scan & Pay via UPI</h2>
-              <div className="inline-block bg-white p-3 rounded-xl mb-4">
-                <img src={qrImage} alt="Payment QR" className="w-56 h-56 object-contain" />
-              </div>
-              <p className="text-gray-400 text-sm mb-1">UPI ID: <span className="font-mono text-yellow-400">9849697886@okhdfcbank</span></p>
-              <p className="text-white font-bold text-lg mt-2">₹{total.toLocaleString()}</p>
-              <p className="text-gray-500 text-xs mt-1">Pay exactly this amount</p>
-            </div>
-
-            {/* Payment Proof Form */}
-            <div className="bg-gray-900 border border-blue-500/20 rounded-2xl p-6 space-y-5">
-              <h2 className="text-white font-semibold text-lg">Upload Payment Proof</h2>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  UTR / Reference Number <span className="text-yellow-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="12-digit UTR number from payment receipt"
-                  value={utrNumber}
-                  onChange={e => setUtrNumber(e.target.value)}
-                  className="w-full bg-black/40 border border-blue-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Payment Screenshot <span className="text-yellow-400">*</span>
-                </label>
-                <label className="block w-full cursor-pointer">
-                  <div className="bg-black/40 border border-blue-500/30 border-dashed rounded-xl p-6 text-center hover:border-yellow-400/60 hover:bg-blue-900/10 transition">
-                    {screenshotPreview ? (
-                      <div className="relative inline-block">
-                        <img src={screenshotPreview} alt="Preview" className="h-40 rounded-lg mx-auto" />
-                        <button type="button" onClick={e => { e.preventDefault(); setScreenshotFile(null); setScreenshotPreview(''); }}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                          <FiX className="w-3 h-3" />
-                        </button>
-                        <p className="text-xs text-gray-400 mt-2">Click to change</p>
-                      </div>
-                    ) : (
-                      <>
-                        <FiUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-400">Click to upload screenshot</p>
-                        <p className="text-xs text-gray-600 mt-1">JPG, PNG up to 5MB</p>
-                      </>
-                    )}
-                  </div>
-                  <input type="file" className="hidden" accept="image/*" onChange={handleScreenshotChange} />
-                </label>
-              </div>
-
-              <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4">
-                <p className="text-sm text-gray-300">
-                  <span className="font-semibold text-white">📝 Note:</span> Admin will verify your payment within 24 hours and confirm your order.
-                </p>
-              </div>
-
-              <div className="flex gap-3">
-                <button onClick={() => setPaymentStep('checkout')}
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition">
-                  Back
-                </button>
-                <button
-                  onClick={handleSubmitPayment}
-                  disabled={submittingPayment || !utrNumber || !screenshotFile}
-                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 text-black font-bold py-3 rounded-xl transition"
-                >
-                  {submittingPayment ? 'Submitting...' : 'Submit Payment'}
-                </button>
-              </div>
+            <div className="bg-gray-900 border border-blue-500/20 rounded-2xl p-8 text-center space-y-5">
+              <p className="text-gray-300 text-sm">Payment was not completed. You can retry securely via Razorpay.</p>
+              <button
+                onClick={() => openRazorpayCheckout(orderId)}
+                disabled={payingNow}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 text-black font-bold py-3.5 rounded-xl transition"
+              >
+                {payingNow ? 'Opening Payment...' : `Pay ₹${total.toLocaleString()}`}
+              </button>
+              <button
+                onClick={() => navigate(`/orders/${orderId}`)}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition"
+              >
+                View Order
+              </button>
             </div>
 
             {/* Order Summary */}
@@ -256,12 +213,9 @@ const CheckoutPage = () => {
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiCheck className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-3">Payment Submitted!</h2>
-              <p className="text-gray-300 text-sm leading-relaxed mb-2">
-                We will verify your payment and update you soon.
-              </p>
+              <h2 className="text-xl font-bold text-white mb-3">Payment Successful!</h2>
               <p className="text-gray-400 text-sm mb-6">
-                Your order is confirmed and pending payment verification. You'll receive an update within 24 hours.
+                Your order has been confirmed.
               </p>
               <button
                 onClick={() => navigate(`/orders/${orderId}`)}
@@ -439,10 +393,10 @@ const CheckoutPage = () => {
                   }`}>
                     <input type="radio" name="payment" checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')} className="accent-yellow-400" />
                     <div className="flex items-center gap-3 flex-1">
-                      <span className="text-2xl">📱</span>
+                      <span className="text-2xl">💳</span>
                       <div>
-                        <p className="text-white font-semibold text-sm">Online Payment (UPI/QR)</p>
-                        <p className="text-gray-400 text-xs">Pay via UPI · QR code shown after placing order</p>
+                        <p className="text-white font-semibold text-sm">Online Payment</p>
+                        <p className="text-gray-400 text-xs">Pay securely via UPI, Cards, Netbanking &amp; Wallets (Razorpay)</p>
                       </div>
                     </div>
                     {paymentMethod === 'online' && <FiCheck className="text-yellow-400 w-5 h-5 flex-shrink-0" />}
@@ -451,7 +405,7 @@ const CheckoutPage = () => {
 
                 {paymentMethod === 'online' && (
                   <div className="mt-4 bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 text-sm text-gray-300">
-                    📲 After placing the order, scan the QR code to pay <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span> and upload your payment screenshot to confirm.
+                    🔒 You'll be redirected to Razorpay's secure checkout to pay <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span>.
                   </div>
                 )}
               </div>

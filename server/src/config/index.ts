@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const config = {
   env: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '5000', 10),
+  port: parseInt(process.env.PORT || '4000', 10),
 
   mongodb: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/asiancinematics',
@@ -28,9 +28,9 @@ const config = {
   },
 
   cors: {
-    clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
-    adminUrl: process.env.ADMIN_URL || 'http://localhost:3001',
-    allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:3001').split(',').map(url => url.trim()),
+    clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+    adminUrl: process.env.ADMIN_URL || 'http://localhost:5174',
+    allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174').split(',').map(url => url.trim()),
   },
 
   email: {
@@ -49,6 +49,7 @@ const config = {
 
   payment: {
     razorpay: {
+      mode: process.env.RAZORPAY_MODE || 'test',
       keyId: process.env.RAZORPAY_KEY_ID || '',
       keySecret: process.env.RAZORPAY_KEY_SECRET || '',
     },

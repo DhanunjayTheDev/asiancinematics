@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import config from '../config';
 import User from '../models/User';
+import Order from '../models/Order';
+import ServiceTicket from '../models/ServiceTicket';
+import SiteVisit from '../models/SiteVisit';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess, sendError } from '../utils/response';
 import { BadRequestError, UnauthorizedError, NotFoundError } from '../utils/errors';
@@ -115,6 +119,32 @@ router.get(
     const user = await User.findById(req.user!._id);
     if (!user) throw new NotFoundError('User not found');
     sendSuccess(res, user);
+  })
+);
+
+// GET /api/v1/auth/me/stats
+router.get(
+  '/me/stats',
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const userId = req.user!._id;
+
+    const [totalOrders, spentAgg, activeTickets, upcomingVisits] = await Promise.all([
+      Order.countDocuments({ user: userId, isDeleted: false }),
+      Order.aggregate([
+        { $match: { user: new mongoose.Types.ObjectId(userId), paymentStatus: 'paid', isDeleted: false } },
+        { $group: { _id: null, total: { $sum: '$totalAmount' } } },
+      ]),
+      ServiceTicket.countDocuments({ user: userId, isDeleted: false, status: { $in: ['open', 'in_progress'] } }),
+      SiteVisit.countDocuments({ user: userId, isDeleted: false, status: { $in: ['scheduled', 'confirmed'] } }),
+    ]);
+
+    sendSuccess(res, {
+      totalOrders,
+      totalSpent: spentAgg[0]?.total || 0,
+      activeTickets,
+      upcomingVisits,
+    });
   })
 );
 

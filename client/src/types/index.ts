@@ -79,7 +79,7 @@ export interface Order {
   shippingCost: number;
   tax: number;
   totalAmount: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'payment_pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   paymentMethod: 'COD' | 'online';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   assignedTo?: User;
