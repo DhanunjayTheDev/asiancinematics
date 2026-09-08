@@ -36,6 +36,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import DisclaimerPage from './pages/DisclaimerPage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
 
 const AUTH_ROUTES = ['/login', '/register'];
 
@@ -94,6 +95,7 @@ const App = () => {
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />
+          <Route path="/refund-policy" element={<RefundPolicyPage />} />
 
           {/* Auth required */}
           <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />

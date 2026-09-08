@@ -255,6 +255,7 @@ const TermsPage = () => (
         <div className="mt-8 pt-6 border-t border-gray-800 flex flex-wrap gap-4 text-xs text-gray-600">
           <Link to="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</Link>
           <Link to="/disclaimer" className="hover:text-yellow-400 transition-colors">Disclaimer</Link>
+          <Link to="/refund-policy" className="hover:text-yellow-400 transition-colors">Refund & Return Policy</Link>
           <Link to="/contact" className="hover:text-yellow-400 transition-colors">Contact Us</Link>
         </div>
       </div>

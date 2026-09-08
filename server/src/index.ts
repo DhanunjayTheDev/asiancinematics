@@ -36,6 +36,7 @@ import adminRoutes from './routes/admin';
 import registrationRoutes from './routes/registration';
 import dealRoutes from './routes/deal';
 import invoiceRoutes from './routes/invoice';
+import webhookRoutes from './routes/webhook';
 
 const app = express();
 const server = http.createServer(app);
@@ -48,7 +49,6 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Security middleware
 app.use(helmet());
-app.use(mongoSanitize());
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -68,6 +68,12 @@ app.use(
     credentials: true,
   })
 );
+
+// Razorpay webhooks — mounted before mongoSanitize/rate-limit/json parsing so the
+// raw request body reaches the route untouched for HMAC signature verification.
+app.use('/api/v1/webhooks', webhookRoutes);
+
+app.use(mongoSanitize());
 
 // Rate limiting
 app.use(

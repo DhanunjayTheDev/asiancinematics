@@ -264,6 +264,9 @@ const Footer = () => (
           <Link to="/disclaimer" className="hover:text-yellow-400 transition-colors">
             Disclaimer
           </Link>
+          <Link to="/refund-policy" className="hover:text-yellow-400 transition-colors">
+            Refund & Return Policy
+          </Link>
         </div>
       </div>
     </div>

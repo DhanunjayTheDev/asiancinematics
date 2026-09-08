@@ -140,6 +140,7 @@ const DisclaimerPage = () => (
         <div className="mt-14 pt-8 border-t border-gray-800 flex flex-wrap gap-4 text-xs text-gray-600">
           <Link to="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-yellow-400 transition-colors">Terms & Conditions</Link>
+          <Link to="/refund-policy" className="hover:text-yellow-400 transition-colors">Refund & Return Policy</Link>
           <Link to="/contact" className="hover:text-yellow-400 transition-colors">Contact Us</Link>
         </div>
       </div>

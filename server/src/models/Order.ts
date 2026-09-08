@@ -85,7 +85,7 @@ const orderSchema = new Schema<IOrder>(
       index: true,
     },
     paymentId: { type: String },
-    razorpayOrderId: { type: String },
+    razorpayOrderId: { type: String, index: true },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'User' },
     notes: { type: String },
     cancelReason: { type: String },
