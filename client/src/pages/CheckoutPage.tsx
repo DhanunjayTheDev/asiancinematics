@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { FiMapPin, FiPlus, FiCheck } from 'react-icons/fi';
+import { FiMapPin, FiPlus, FiCheck, FiLock } from 'react-icons/fi';
 import api from '../lib/api';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
@@ -404,8 +404,9 @@ const CheckoutPage = () => {
                 </div>
 
                 {paymentMethod === 'online' && (
-                  <div className="mt-4 bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 text-sm text-gray-300">
-                    🔒 You'll be redirected to Razorpay's secure checkout to pay <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span>.
+                  <div className="mt-4 bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 text-sm text-gray-300 flex items-start gap-2">
+                    <FiLock className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <span>You'll be redirected to Razorpay's secure checkout to pay <span className="text-yellow-400 font-semibold">₹{total.toLocaleString()}</span>. We never see or store your card, UPI, or bank details.</span>
                   </div>
                 )}
               </div>
@@ -468,10 +469,25 @@ const CheckoutPage = () => {
                 <button
                   onClick={handlePlaceOrder}
                   disabled={loading || (!selectedAddress && !showAddAddress)}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 text-black font-bold py-3.5 rounded-xl transition text-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 text-black font-bold py-3.5 rounded-xl transition text-sm"
                 >
-                  {loading ? 'Placing Order...' : paymentMethod === 'online' ? 'Place Order & Pay' : 'Place Order (COD)'}
+                  {loading ? (
+                    'Placing Order...'
+                  ) : paymentMethod === 'online' ? (
+                    <>
+                      <FiLock className="w-4 h-4" />
+                      Pay with Razorpay
+                    </>
+                  ) : (
+                    'Place Order (COD)'
+                  )}
                 </button>
+
+                {paymentMethod === 'online' && (
+                  <p className="text-center text-gray-500 text-[11px] mt-3 flex items-center justify-center gap-1.5">
+                    <FiLock className="w-3 h-3" /> Payments secured by Razorpay · 256-bit encryption
+                  </p>
+                )}
 
                 <p className="text-center text-gray-600 text-xs mt-3">
                   By placing the order you agree to our terms of service
